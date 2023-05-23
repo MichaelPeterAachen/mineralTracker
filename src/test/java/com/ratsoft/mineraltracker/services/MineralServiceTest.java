@@ -49,11 +49,7 @@ class MineralServiceTest {
 
     @Test
     public void getMineralPresent() {
-        final Mineral mineral1 = new Mineral (1L, "IRON2");
         final Mineral mineral2 = new Mineral (2L, "SELEN2");
-        final Mineral mineral3 = new Mineral (3L, "FLOUR2");
-
-        final List<Mineral> mineralList = List.of(mineral1, mineral2, mineral3);
 
         when(mineralRepository.findById(2L)).thenReturn(Optional.of(mineral2));
 
@@ -64,15 +60,9 @@ class MineralServiceTest {
 
     @Test
     public void getMineralNotPresent() {
-        final Mineral mineral1 = new Mineral (1L, "IRON2");
-        final Mineral mineral2 = new Mineral (2L, "SELEN2");
-        final Mineral mineral3 = new Mineral (3L, "FLOUR2");
-
-        final List<Mineral> mineralList = List.of(mineral1, mineral2, mineral3);
-
         when(mineralRepository.findById(4L)).thenReturn(Optional.empty());
 
-        final Optional<Mineral> mineralResult = mineralService.getMineral(2L);
+        final Optional<Mineral> mineralResult = mineralService.getMineral(4L);
 
         assertThat(mineralResult).isEmpty();
     }

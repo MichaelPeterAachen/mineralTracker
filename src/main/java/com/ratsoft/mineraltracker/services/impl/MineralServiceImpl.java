@@ -27,11 +27,6 @@ public class MineralServiceImpl implements MineralService {
 
     private final MineralMapper mapper;
 
-    /**
-     * Return a list of all minerals.
-     *
-     * @return all minerals in the database.
-     */
     @Override
     public Set<Mineral> getAllMinerals() {
         final Iterable<Mineral> allMinerals = mineralRepository.findAll();
@@ -42,23 +37,11 @@ public class MineralServiceImpl implements MineralService {
         return minerals;
     }
 
-    /**
-     * Return a mineral for a given id.
-     *
-     * @param id id of the mineral
-     * @return Optional mineral.
-     */
     @Override
     public Optional<Mineral> getMineral(final Long id) {
         return mineralRepository.findById(id);
     }
 
-    /**
-     * Save or update a mineral in the database.
-     *
-     * @param mineralCommand the mineral to save.
-     * @return the saved mineral as a command. In case a new mineral was saved, the id is contained.
-     */
     @Override
     public MineralCommand saveMineralCommand(final MineralCommand mineralCommand) {
         log.debug("Save or update mineral: {}",mineralCommand);

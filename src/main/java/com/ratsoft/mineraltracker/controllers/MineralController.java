@@ -113,9 +113,14 @@ public class MineralController {
      * @return New page being shown afterwars.
      */
     @GetMapping(value = {"/minerals/{id}/delete","/minerals/{id}/delete/"})
-    public String deleteMineral(@PathVariable final String id) {
+    public String deleteMineral(@PathVariable final String id, final Model model) {
         log.info("Request to delete a material: {}",id);
-        mineralService.deleteMineral(Long.valueOf(id));
+        try {
+            mineralService.deleteMineral(Long.valueOf(id));
+        } catch (Exception e) {
+            model.addAttribute("error", "Mineral could not be removed, it is still in use.");
+            return "error/error";
+        }
         return "redirect:/minerals";
     }
 }
