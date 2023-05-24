@@ -22,12 +22,12 @@ public class MineralRecommendation {
     private float minAmount;
     private float maxAmount;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private Unit unit;
 
     private long timePeriodLength;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private RecommendationPeriodType timePeriodDimension;
 
 }

@@ -18,6 +18,7 @@ import java.util.Set;
  *
  * @author mpeter
  */
+@SuppressWarnings({"HardcodedFileSeparator", "SameReturnValue"})
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class MineralController {
      * @param model the model for the template.
      * @return the template name.
      */
-    @GetMapping(value = {"/minerals", "/minerals/"})
+    @GetMapping({"/minerals", "/minerals/"})
     public String listMinerals(final Model model) {
         log.debug("Getting mineral list");
 
@@ -51,7 +52,8 @@ public class MineralController {
      * @param model the model for the template.
      * @return the template name.
      */
-    @GetMapping(value = "/minerals/{id}")
+    @SuppressWarnings("NestedMethodCall")
+    @GetMapping("/minerals/{id}")
     public String showMineral(@PathVariable final String id, final Model model) {
         log.debug("Getting mineral with id: {}", id);
 
@@ -68,7 +70,8 @@ public class MineralController {
      * @param model the model for the template.
      * @return the template name or editing.
      */
-    @GetMapping(value = "/minerals/{id}/editform")
+    @SuppressWarnings("NestedMethodCall")
+    @GetMapping("/minerals/{id}/editform")
     public String getEditMineralForm(@PathVariable final String id, final Model model) {
         log.debug("Getting edit form for a mineral with id: {}", id);
 
@@ -84,7 +87,8 @@ public class MineralController {
      * @param model the model for the template.
      * @return the template name or editing.
      */
-    @GetMapping(value = "/minerals/newform")
+    @SuppressWarnings("NestedMethodCall")
+    @GetMapping("/minerals/newform")
     public String getEditMineralForm(final Model model) {
         log.debug("Getting new mineral form.");
 
@@ -99,7 +103,7 @@ public class MineralController {
      * @param command the command to save or update.
      * @return New page being shown afterwars.
      */
-    @PostMapping(value = {"/minerals","/minerals/"})
+    @PostMapping({"/minerals", "/minerals/"})
     public String saveOrUpdateMineral(@ModelAttribute final MineralCommand command) {
         log.info("Request to save or update material: {}",command);
         final MineralCommand savedCommand = mineralService.saveMineralCommand(command);
@@ -110,14 +114,15 @@ public class MineralController {
     /**
      * Delete a specific mineral.
      * @param id the id of the mineral to delete.
+     * @param model the model for the templates.
      * @return New page being shown afterwars.
      */
-    @GetMapping(value = {"/minerals/{id}/delete","/minerals/{id}/delete/"})
+    @GetMapping({"/minerals/{id}/delete", "/minerals/{id}/delete/"})
     public String deleteMineral(@PathVariable final String id, final Model model) {
         log.info("Request to delete a material: {}",id);
         try {
             mineralService.deleteMineral(Long.valueOf(id));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             model.addAttribute("error", "Mineral could not be removed, it is still in use.");
             return "error/error";
         }

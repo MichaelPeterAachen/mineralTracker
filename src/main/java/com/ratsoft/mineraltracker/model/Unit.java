@@ -9,7 +9,7 @@ public enum Unit {
     /**
      * Dimension is µg.
      */
-    µg,
+    @SuppressWarnings("NonAsciiCharacters") µg,
     /**
      * Dimension is mg.
      */

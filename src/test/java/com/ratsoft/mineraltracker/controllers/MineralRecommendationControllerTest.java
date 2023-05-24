@@ -8,6 +8,7 @@ import com.ratsoft.mineraltracker.model.MineralRecommendation;
 import com.ratsoft.mineraltracker.model.RecommendationPeriodType;
 import com.ratsoft.mineraltracker.model.Unit;
 import com.ratsoft.mineraltracker.services.MineralRecommendationService;
+import com.ratsoft.mineraltracker.services.MineralService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,9 @@ public class MineralRecommendationControllerTest {
     private MineralRecommendationService mineralRecommendationService;
 
     @Mock
+    private MineralService mineralService;
+
+    @Mock
     private Model model;
 
     private MockMvc mockMvc;
@@ -51,7 +55,7 @@ public class MineralRecommendationControllerTest {
 
     @BeforeEach
     void setUp() {
-        mineralRecommendationController = new MineralRecommendationController(mineralRecommendationService, Mappers.getMapper(MineralRecommendationMapper.class));
+        mineralRecommendationController = new MineralRecommendationController(mineralRecommendationService, mineralService, Mappers.getMapper(MineralRecommendationMapper.class));
         mockMvc = MockMvcBuilders.standaloneSetup(mineralRecommendationController)
                                  .build();
     }
@@ -120,23 +124,31 @@ public class MineralRecommendationControllerTest {
         final MineralRecommendationCommand mineralRecommendationCommand = buildMineralRecommendationCommand(mineralCommand, 2, Unit.g, RecommendationPeriodType.DAYS);
 
         when(mineralRecommendationService.getMineralRecommendation(2L)).thenReturn(Optional.of(mineralRecommendation2));
+        when(mineralService.getAllMinerals()).thenReturn(Set.of(mineral));
 
         mockMvc.perform(get("/mineralrecommendations/2/editform"))
                .andExpect(status().isOk())
                .andExpect(view().name("mineralrecommendations/editform"))
                .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("mineralrecommendation", mineralRecommendationCommand));
+                                               .attribute("mineralrecommendation", mineralRecommendationCommand))
+               .andExpect(MockMvcResultMatchers.model()
+                                               .attribute("minerals", Matchers.hasSize(1)));
     }
 
     @Test
     void getNewFormForMineral() throws Exception {
         final MineralRecommendationCommand mineralRecommendationCommandNew = new MineralRecommendationCommand();
 
+        final Mineral mineral = new Mineral(2L, "Selen");
+        when(mineralService.getAllMinerals()).thenReturn(Set.of(mineral));
+
         mockMvc.perform(get("/mineralrecommendations/newform"))
                .andExpect(status().isOk())
                .andExpect(view().name("mineralrecommendations/editform"))
                .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("mineralrecommendation", mineralRecommendationCommandNew));
+                                               .attribute("mineralrecommendation", mineralRecommendationCommandNew))
+               .andExpect(MockMvcResultMatchers.model()
+                                               .attribute("minerals", Matchers.hasSize(1)));
     }
 
     @Test

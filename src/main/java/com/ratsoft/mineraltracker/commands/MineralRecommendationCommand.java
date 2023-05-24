@@ -1,9 +1,7 @@
 package com.ratsoft.mineraltracker.commands;
 
-import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.RecommendationPeriodType;
 import com.ratsoft.mineraltracker.model.Unit;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,5 +25,4 @@ public class MineralRecommendationCommand {
     private long timePeriodLength;
 
     private RecommendationPeriodType timePeriodDimension;
-
 }

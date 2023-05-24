@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author mpeter
  */
+@SuppressWarnings("HardcodedFileSeparator")
 @Slf4j
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class LandingPageController {
      * @param model the model for the template.
      * @return the template name.
      */
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
     public String getLandingPage(final Model model) {
         log.debug("Getting landing page");

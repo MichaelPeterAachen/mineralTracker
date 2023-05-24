@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Recipe Home</title>
+	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+	> <!--th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"-->
+
+	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	        crossorigin="anonymous" <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->></script>
+</head>
+<body>
+<div class="container-fluid" style="margin-top: 20px">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<form th:object="${mineralrecommendation}" th:action="@{/mineralrecommendations/}" method="post">
+				<input type="hidden" th:if="${mineralrecommendation.id != null}" th:field="*{id}"/>
+				<div class="panel panel-primary">
+					<p>
+						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals" th:if="${mineralrecommendation.id != null}" th:href="@{'/mineralrecommendations/'+${mineralrecommendation.id}}">&lt; Back</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals" th:if="${mineralrecommendation.id == null}" th:href="@{'/mineralrecommendations/'}">&lt; Back</a>
+					</p>
+					<div class="panel-heading">
+						<h1 class="panel-title">Update Mineral Recommendation</h1>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>ID:</label>
+								<input type="text" disabled="true" class="form-control" th:field="*{id}"/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Mineral:</label>
+								<select class="form-control" name="material.id">
+									<option th:each="mineral : ${minerals}"
+									        th:value="${mineral.id}"
+									        th:selected="${mineral.id.equals(mineralrecommendation.getMineralId())}"
+									        th:text="${mineral.name}">Name of material</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Min amount:</label>
+								<input type="number" class="form-control" th:field="*{minAmount}"/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Max amount:</label>
+								<input type="number" class="form-control" th:field="*{maxAmount}"/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Unit:</label>
+								<select class="form-control" name="unit">
+									<option th:each="unitOpt:${T(com.ratsoft.mineraltracker.model.Unit).values()}"
+									        th:selected="${unitOpt.name().equals(mineralrecommendation.unit.name())}"
+									        th:value="${unitOpt}" th:text="${unitOpt}"></option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Period length:</label>
+								<input type="number" class="form-control" th:field="*{timePeriodLength}"/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Unit:</label>
+								<select class="form-control" name="timePeriodDimension">
+									<option th:each="periodType : ${T(com.ratsoft.mineraltracker.model.RecommendationPeriodType).values()}"
+									        th:selected="${periodType.name().equals(mineralrecommendation.timePeriodDimension.name())}"
+									        th:value="${periodType}" th:text="${periodType}"></option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

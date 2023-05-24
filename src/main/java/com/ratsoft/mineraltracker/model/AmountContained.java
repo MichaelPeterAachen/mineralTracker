@@ -20,6 +20,6 @@ public class AmountContained {
 
     private float amount;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private Unit unit;
 }

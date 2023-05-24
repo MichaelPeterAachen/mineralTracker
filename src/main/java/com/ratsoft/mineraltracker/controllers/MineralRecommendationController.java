@@ -5,6 +5,7 @@ import com.ratsoft.mineraltracker.converters.MineralRecommendationMapper;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
 import com.ratsoft.mineraltracker.services.MineralRecommendationService;
+import com.ratsoft.mineraltracker.services.MineralService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -22,12 +23,15 @@ import java.util.Set;
  *
  * @author mpeter
  */
+@SuppressWarnings({"HardcodedFileSeparator", "SameReturnValue"})
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class MineralRecommendationController {
 
     private final MineralRecommendationService mineralRecommendationService;
+
+    private final MineralService mineralService;
 
     private final MineralRecommendationMapper mineralRecommendationMapper;
 
@@ -37,7 +41,7 @@ public class MineralRecommendationController {
      * @param model the model for the template.
      * @return the template name.
      */
-    @GetMapping(value = {"/mineralrecommendations", "/mineralrecommendations/"})
+    @GetMapping({"/mineralrecommendations", "/mineralrecommendations/"})
     public String listMineralRecommendations(final Model model) {
         log.debug("Getting all mineral recommendations");
 
@@ -55,7 +59,8 @@ public class MineralRecommendationController {
      * @param model the model for the template.
      * @return the template name.
      */
-    @GetMapping(value = "/mineralrecommendations/{id}")
+    @SuppressWarnings("NestedMethodCall")
+    @GetMapping("/mineralrecommendations/{id}")
     public String showMineralRecommendation(@PathVariable final String id, final Model model) {
         log.debug("Getting mineral recommendation with id: {}", id);
 
@@ -72,12 +77,16 @@ public class MineralRecommendationController {
      * @param model the model for the template.
      * @return the template name or editing.
      */
-    @GetMapping(value = "/mineralrecommendations/{id}/editform")
+    @SuppressWarnings("NestedMethodCall")
+    @GetMapping("/mineralrecommendations/{id}/editform")
     public String getEditMineralRecommendationForm(@PathVariable final String id, final Model model) {
         log.debug("Getting edit form for a mineral recommendation with id: {}", id);
 
         final Optional<MineralRecommendation> mineralRecommendation = mineralRecommendationService.getMineralRecommendation(Long.valueOf(id));
         mineralRecommendation.ifPresent(value -> model.addAttribute("mineralrecommendation", mineralRecommendationMapper.mineralRecommendationToCommand(value)));
+
+        final Set<Mineral> minerals = mineralService.getAllMinerals();
+        model.addAttribute("minerals", minerals);
 
         return "mineralrecommendations/editform";
     }
@@ -88,12 +97,16 @@ public class MineralRecommendationController {
      * @param model the model for the template.
      * @return the template name or editing.
      */
-    @GetMapping(value = "/mineralrecommendations/newform")
+    @SuppressWarnings("NestedMethodCall")
+    @GetMapping("/mineralrecommendations/newform")
     public String getEditMineralRecommendationForm(final Model model) {
         log.debug("Getting new mineral recommendation form.");
 
         final MineralRecommendation mineralRecommendation = new MineralRecommendation();
         model.addAttribute("mineralrecommendation", mineralRecommendationMapper.mineralRecommendationToCommand(mineralRecommendation));
+
+        final Set<Mineral> minerals = mineralService.getAllMinerals();
+        model.addAttribute("minerals", minerals);
 
         return "mineralrecommendations/editform";
     }
@@ -104,7 +117,7 @@ public class MineralRecommendationController {
      * @param command the command to save or update.
      * @return New page being shown afterwars.
      */
-    @PostMapping(value = {"/mineralrecommendations", "/mineralrecommendations/"})
+    @PostMapping({"/mineralrecommendations", "/mineralrecommendations/"})
     public String saveOrUpdateMineralRecommendation(@ModelAttribute final MineralRecommendationCommand command) {
         log.info("Request to save or update mineral recommendation : {}", command);
         final MineralRecommendationCommand savedCommand = mineralRecommendationService.saveMineralRecommendationCommand(command);
@@ -119,12 +132,12 @@ public class MineralRecommendationController {
      * @param model the model for the page.
      * @return New page being shown afterwars.
      */
-    @GetMapping(value = {"/mineralrecommendations/{id}/delete", "/mineralrecommendations/{id}/delete/"})
+    @GetMapping({"/mineralrecommendations/{id}/delete", "/mineralrecommendations/{id}/delete/"})
     public String deleteMineralRecommendation(@PathVariable final String id, final Model model) {
         log.info("Request to delete a mineral recommentation: {}", id);
         try {
             mineralRecommendationService.deleteMineralRecommendation(Long.valueOf(id));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             model.addAttribute("error", "Mineral recommendation could not be removed, it is still in use.");
             return "error/error";
         }
