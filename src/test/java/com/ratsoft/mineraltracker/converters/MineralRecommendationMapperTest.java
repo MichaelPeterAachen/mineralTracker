@@ -6,6 +6,7 @@ import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
 import com.ratsoft.mineraltracker.model.RecommendationPeriodType;
 import com.ratsoft.mineraltracker.model.Unit;
+import lombok.NoArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -15,11 +16,13 @@ import org.mapstruct.factory.Mappers;
  *
  * @author mpeter
  */
+@SuppressWarnings({"ProhibitedExceptionDeclared", "DataFlowIssue"})
+@NoArgsConstructor
 class MineralRecommendationMapperTest {
 
     @Test
-    public void testMappingToCommand() {
-        final Mineral mineral = new Mineral(2L, "SELEN");
+    public void testMappingToCommand() throws Exception {
+        final Mineral mineral = new Mineral(2L, "SELEN", null);
 
         final MineralRecommendation mineralRecommendation = new MineralRecommendation();
         mineralRecommendation.setId(1L);
@@ -56,8 +59,8 @@ class MineralRecommendationMapperTest {
     }
 
     @Test
-    public void testMappingfromCommand() {
-        final MineralCommand mineralCommand = new MineralCommand(2L, "SELEN");
+    public void testMappingfromCommand() throws Exception {
+        final MineralCommand mineralCommand = new MineralCommand(2L, "SELEN", null);
 
         final MineralRecommendationCommand mineralRecommendationCommand = new MineralRecommendationCommand();
         mineralRecommendationCommand.setId(1L);
@@ -94,7 +97,7 @@ class MineralRecommendationMapperTest {
     }
 
     @Test
-    public void testMappingToCommandNull() {
+    public void testMappingToCommandNull() throws Exception {
         final MineralRecommendationMapper mapper = Mappers.getMapper(MineralRecommendationMapper.class);
         final MineralRecommendationCommand mineralCommand = mapper.mineralRecommendationToCommand(null);
 
@@ -103,7 +106,7 @@ class MineralRecommendationMapperTest {
     }
 
     @Test
-    public void testMappingfromCommandNull() {
+    public void testMappingfromCommandNull() throws Exception {
         final MineralRecommendationMapper mapper = Mappers.getMapper(MineralRecommendationMapper.class);
         final MineralRecommendation mineral = mapper.commandToMineralRecommendation(null);
 

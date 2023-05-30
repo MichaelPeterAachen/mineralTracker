@@ -1,9 +1,10 @@
 package com.ratsoft.mineraltracker.repositories;
 
-import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
 import com.ratsoft.mineraltracker.model.RecommendationPeriodType;
 import com.ratsoft.mineraltracker.model.Unit;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author mpeter
  */
+@SuppressWarnings("PackageVisibleField")
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@NoArgsConstructor
 class MineralRecommendationRepositoryTest {
 
     @Autowired
+    @NonNull
     MineralRecommendationRepository mineralRecommendationRepository;
 
     /**
@@ -37,7 +41,8 @@ class MineralRecommendationRepositoryTest {
         final MineralRecommendation mineralRecommendation = mineralRecommendationOptional.get();
 
         assertThat(mineralRecommendation.getId()).isEqualTo(1L);
-        assertThat(mineralRecommendation.getMineral().getName()).isEqualTo("Eisen");
+        assertThat(mineralRecommendation.getMineral()
+                                        .getName()).isEqualTo("Eisen");
         assertThat(mineralRecommendation.getMinAmount()).isEqualTo(1.0f);
         assertThat(mineralRecommendation.getMaxAmount()).isEqualTo(11.0f);
         assertThat(mineralRecommendation.getTimePeriodLength()).isEqualTo(1);

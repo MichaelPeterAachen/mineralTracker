@@ -2,6 +2,7 @@ package com.ratsoft.mineraltracker.converters;
 
 import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.model.Mineral;
+import lombok.NoArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -11,11 +12,13 @@ import org.mapstruct.factory.Mappers;
  *
  * @author mpeter
  */
+@SuppressWarnings("DataFlowIssue")
+@NoArgsConstructor
 class MineralMapperTest {
 
     @Test
     public void testMappingToCommand() {
-        final Mineral mineral = new Mineral(1L, "SELEN");
+        final Mineral mineral = new Mineral(1L, "SELEN", null);
 
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
         final MineralCommand mineralCommand = mapper.mineralToCommand(mineral);
@@ -28,7 +31,7 @@ class MineralMapperTest {
 
     @Test
     public void testMappingfromCommand() {
-        final MineralCommand mineralCommand = new MineralCommand(1L, "SELEN");
+        final MineralCommand mineralCommand = new MineralCommand(1L, "SELEN", null);
 
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
         final Mineral mineral = mapper.commandToMineral(mineralCommand);
@@ -44,7 +47,8 @@ class MineralMapperTest {
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
         final MineralCommand mineralCommand = mapper.mineralToCommand(null);
 
-        Assertions.assertThat(mineralCommand).isNull();
+        Assertions.assertThat(mineralCommand)
+                  .isNull();
     }
 
     @Test
@@ -52,6 +56,7 @@ class MineralMapperTest {
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
         final Mineral mineral = mapper.commandToMineral(null);
 
-        Assertions.assertThat(mineral).isNull();
+        Assertions.assertThat(mineral)
+                  .isNull();
     }
 }

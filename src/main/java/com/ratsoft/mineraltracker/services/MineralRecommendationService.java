@@ -1,7 +1,9 @@
 package com.ratsoft.mineraltracker.services;
 
 import com.ratsoft.mineraltracker.commands.MineralRecommendationCommand;
+import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
+import lombok.NonNull;
 
 import java.util.Optional;
 import java.util.Set;
@@ -17,7 +19,7 @@ public interface MineralRecommendationService {
      *
      * @return all mineral recommendations in the database.
      */
-    Set<MineralRecommendation> getAllMineralRecommendations();
+    @NonNull Set<MineralRecommendation> getAllMineralRecommendations();
 
     /**
      * Return a mineral recommendation for a given id.
@@ -25,20 +27,29 @@ public interface MineralRecommendationService {
      * @param id id of the mineral recommendation
      * @return Optional mineral recommendation.
      */
-    Optional<MineralRecommendation> getMineralRecommendation(Long id);
+    @NonNull Optional<MineralRecommendation> getMineralRecommendation(@NonNull Long id);
 
     /**
      * Save or update a mineral recommendation in the database.
      *
-     * @param mineralCommand the mineral recommendation to save.
+     * @param mineralRecommendationCommand the mineral recommendation to save.
      * @return the saved mineral recommendation as a command. In case a new mineral recommendation was saved, the id is contained.
      */
-    MineralRecommendationCommand saveMineralRecommendationCommand(MineralRecommendationCommand mineralCommand);
+    @NonNull MineralRecommendationCommand saveMineralRecommendationCommand(@NonNull MineralRecommendationCommand mineralRecommendationCommand);
 
     /**
      * Delete a mineral recommendation.
      *
      * @param id the id of the entitiy to be deleted.
      */
-    void deleteMineralRecommendation(Long id);
+    void deleteMineralRecommendation(@NonNull Long id);
+
+    /**
+     * Query all minerals, for which already a recommendation exists. There can only be one recommendation for each mineral.
+     *
+     * @return Set of all minerals, being used.
+     */
+    @NonNull Set<Mineral> getMineralsAlreadyUsed();
+
+    @NonNull Optional<MineralRecommendation> findRecommendationForMineral(@NonNull String mineral);
 }

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress SyntaxError -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8"/>
@@ -18,19 +19,46 @@
 	        crossorigin="anonymous"></script> <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
 </head>
 <body>
-<div class="container-fluid bg-3" style="margin-top: 20px">
+<div class="container-fluid" style="margin-top: 20px">
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
-			<div class="panel panel-default">
-				<div class="panel-heading"><h1 class="panel-title" th:text="'Landing Page'">Landing Page</h1></div>
+			<div class="panel panel-primary">
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/foods">&lt; Back</a>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" th:href="@{'/foods/'+${food?.id}+'/editform'}">Edit</a>
+				</p>
+
+				<div class="panel-heading">
+					<h1 class="panel-title">Food Details</h1>
+				</div>
 				<div class="panel-body">
-					<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals">Minerals</a></p>
-					<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/mineralrecommendations">Mineral Recommendations</a></p>
-					<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/foods">Foods</a></p>
+
+					<div class="table-responsive">
+						<table class="table table-hover ">
+							<thead class="thead-inverse">
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>Contained Minerals</th>
+							</tr>
+							</thead>
+							<tr>
+								<td th:text="${food?.id}">Food ID</td>
+								<td th:text="${food?.name}">Food name</td>
+								<td>
+									<p th:if="${#lists.size(food.containedMinerals)} == 0">-</p>
+									<ul th:if="${#lists.size(food.containedMinerals)} > 0">
+										<li th:each="containedMineral : ${food.containedMinerals}"
+										    th:text="@{${containedMineral.mineral.name}+' - '+${containedMineral.amount}+' '+${containedMineral.unit}}"></li>
+									</ul>
+								</td>
+							</tr>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.ratsoft.mineraltracker.controllers;
 
 import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.commands.MineralRecommendationCommand;
+import com.ratsoft.mineraltracker.converters.MineralMapper;
 import com.ratsoft.mineraltracker.converters.MineralRecommendationMapper;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
@@ -9,6 +10,8 @@ import com.ratsoft.mineraltracker.model.RecommendationPeriodType;
 import com.ratsoft.mineraltracker.model.Unit;
 import com.ratsoft.mineraltracker.services.MineralRecommendationService;
 import com.ratsoft.mineraltracker.services.MineralService;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,35 +39,38 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+@SuppressWarnings("ProhibitedExceptionDeclared")
 @ExtendWith(MockitoExtension.class)
+@NoArgsConstructor
 public class MineralRecommendationControllerTest {
 
-    private MineralRecommendationController mineralRecommendationController;
+    private @NonNull MineralRecommendationController mineralRecommendationController;
 
     @Mock
-    private MineralRecommendationService mineralRecommendationService;
+    private @NonNull MineralRecommendationService mineralRecommendationService;
 
     @Mock
-    private MineralService mineralService;
+    private @NonNull MineralService mineralService;
 
     @Mock
-    private Model model;
+    private @NonNull Model model;
 
-    private MockMvc mockMvc;
+    private @NonNull MockMvc mockMvc;
 
 
     @BeforeEach
     void setUp() {
-        mineralRecommendationController = new MineralRecommendationController(mineralRecommendationService, mineralService, Mappers.getMapper(MineralRecommendationMapper.class));
+        mineralRecommendationController = new MineralRecommendationController(mineralRecommendationService, mineralService, Mappers.getMapper(MineralRecommendationMapper.class), Mappers.getMapper(MineralMapper.class));
         mockMvc = MockMvcBuilders.standaloneSetup(mineralRecommendationController)
                                  .build();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     void listMineralRecommendations() throws Exception {
-        final Mineral mineralCommand1 = new Mineral(1L, "Eisen");
-        final Mineral mineralCommand2 = new Mineral(2L, "Selen");
-        final Mineral mineralCommand3 = new Mineral(3L, "Mangan");
+        final Mineral mineralCommand1 = new Mineral(1L, "Eisen", null);
+        final Mineral mineralCommand2 = new Mineral(2L, "Selen", null);
+        final Mineral mineralCommand3 = new Mineral(3L, "Mangan", null);
 
         final MineralRecommendation mineralRecommendation1 = buildMineralRecommendation(mineralCommand1, 1, Unit.mg, RecommendationPeriodType.HOURS);
         final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineralCommand2, 2, Unit.g, RecommendationPeriodType.DAYS);
@@ -93,7 +99,7 @@ public class MineralRecommendationControllerTest {
 
     @Test
     void showMineral() throws Exception {
-        final Mineral mineralCommand2 = new Mineral(2L, "Selen");
+        final Mineral mineralCommand2 = new Mineral(2L, "Selen", null);
         final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineralCommand2, 2, Unit.g, RecommendationPeriodType.DAYS);
 
         when(mineralRecommendationService.getMineralRecommendation(2L)).thenReturn(Optional.of(mineralRecommendation2));
@@ -117,14 +123,20 @@ public class MineralRecommendationControllerTest {
 
     @Test
     void getEditFormForMineral() throws Exception {
-        final Mineral mineral = new Mineral(2L, "Selen");
-        final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineral, 2, Unit.g, RecommendationPeriodType.DAYS);
+        final Mineral mineral1 = new Mineral(1L, "Eisen", null);
+        final Mineral mineral2 = new Mineral(2L, "Selen", null);
+        final Mineral mineral3 = new Mineral(3L, "Fluor", null);
+        final Mineral mineral4 = new Mineral(4L, "Mangan", null);
 
-        final MineralCommand mineralCommand = new MineralCommand(2L, "Selen");
+        final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineral2, 2, Unit.g, RecommendationPeriodType.DAYS);
+
+        final MineralCommand mineralCommand = new MineralCommand(2L, "Selen", null);
         final MineralRecommendationCommand mineralRecommendationCommand = buildMineralRecommendationCommand(mineralCommand, 2, Unit.g, RecommendationPeriodType.DAYS);
 
         when(mineralRecommendationService.getMineralRecommendation(2L)).thenReturn(Optional.of(mineralRecommendation2));
-        when(mineralService.getAllMinerals()).thenReturn(Set.of(mineral));
+        when(mineralRecommendationService.getMineralsAlreadyUsed()).thenReturn(Set.of(mineral2, mineral3));
+
+        when(mineralService.getAllMinerals()).thenReturn(Set.of(mineral1, mineral2, mineral3, mineral4));
 
         mockMvc.perform(get("/mineralrecommendations/2/editform"))
                .andExpect(status().isOk())
@@ -132,15 +144,21 @@ public class MineralRecommendationControllerTest {
                .andExpect(MockMvcResultMatchers.model()
                                                .attribute("mineralrecommendation", mineralRecommendationCommand))
                .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("minerals", Matchers.hasSize(1)));
+                                               .attribute("minerals", Set.of(mineral1, mineral2, mineral4)));
     }
 
     @Test
     void getNewFormForMineral() throws Exception {
         final MineralRecommendationCommand mineralRecommendationCommandNew = new MineralRecommendationCommand();
 
-        final Mineral mineral = new Mineral(2L, "Selen");
-        when(mineralService.getAllMinerals()).thenReturn(Set.of(mineral));
+        final Mineral mineral1 = new Mineral(1L, "Eisen", null);
+        final Mineral mineral2 = new Mineral(2L, "Selen", null);
+        final Mineral mineral3 = new Mineral(3L, "Fluor", null);
+        final Mineral mineral4 = new Mineral(4L, "Mangan", null);
+
+        when(mineralRecommendationService.getMineralsAlreadyUsed()).thenReturn(Set.of(mineral1, mineral2));
+
+        when(mineralService.getAllMinerals()).thenReturn(Set.of(mineral1, mineral2, mineral3, mineral4));
 
         mockMvc.perform(get("/mineralrecommendations/newform"))
                .andExpect(status().isOk())
@@ -148,14 +166,13 @@ public class MineralRecommendationControllerTest {
                .andExpect(MockMvcResultMatchers.model()
                                                .attribute("mineralrecommendation", mineralRecommendationCommandNew))
                .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("minerals", Matchers.hasSize(1)));
+                                               .attribute("minerals", Set.of(mineral3, mineral4)));
     }
 
     @Test
     void newMineral() throws Exception {
-        final MineralCommand mineralCommand2 = new MineralCommand(2L, "Selen");
+        final MineralCommand mineralCommand2 = new MineralCommand(2L, "Selen", null);
         final MineralRecommendationCommand mineralRecommendationSaved = buildMineralRecommendationCommand(mineralCommand2, 2, Unit.g, RecommendationPeriodType.DAYS);
-
         when(mineralRecommendationService.saveMineralRecommendationCommand(any())).thenReturn(mineralRecommendationSaved);
 
         mockMvc.perform(post(URI.create("/mineralrecommendations")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -163,6 +180,20 @@ public class MineralRecommendationControllerTest {
                .andExpect(status().isMovedTemporarily())
                .andExpect(view().name("redirect:/mineralrecommendations/3"));
     }
+
+    @Test
+    void newMineralException() throws Exception {
+        doThrow(IllegalArgumentException.class).when(mineralRecommendationService)
+                                               .saveMineralRecommendationCommand(any());
+
+        mockMvc.perform(post(URI.create("/mineralrecommendations")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                                                   .param("name", "NewMineral2"))
+               .andExpect(status().isOk())
+               .andExpect(view().name("error/error"));
+
+        verify(mineralRecommendationService, times(1)).saveMineralRecommendationCommand(any());
+    }
+
 
     @Test
     void deleteMineral() throws Exception {
@@ -173,8 +204,19 @@ public class MineralRecommendationControllerTest {
         verify(mineralRecommendationService, times(1)).deleteMineralRecommendation(1L);
     }
 
+    @Test
+    void deleteMineralException() throws Exception {
+        doThrow(IllegalArgumentException.class).when(mineralRecommendationService)
+                                               .deleteMineralRecommendation(any());
 
-    private static MineralRecommendation buildMineralRecommendation(Mineral mineral, long no, Unit unit, RecommendationPeriodType periodType) {
+        mockMvc.perform(get("/mineralrecommendations/1/delete"))
+               .andExpect(status().isOk())
+               .andExpect(view().name("error/error"));
+
+        verify(mineralRecommendationService, times(1)).deleteMineralRecommendation(1L);
+    }
+
+    private static MineralRecommendation buildMineralRecommendation(final @NonNull Mineral mineral, final long no, final @NonNull Unit unit, final @NonNull RecommendationPeriodType periodType) {
         final MineralRecommendation mineralRecommendation1 = new MineralRecommendation();
         mineralRecommendation1.setId(1L + no);
         mineralRecommendation1.setMineral(mineral);
@@ -186,7 +228,7 @@ public class MineralRecommendationControllerTest {
         return mineralRecommendation1;
     }
 
-    private static MineralRecommendationCommand buildMineralRecommendationCommand(MineralCommand mineralCommand, long no, Unit unit, RecommendationPeriodType periodType) {
+    private static MineralRecommendationCommand buildMineralRecommendationCommand(final @NonNull MineralCommand mineralCommand, final long no, final @NonNull Unit unit, final @NonNull RecommendationPeriodType periodType) {
         final MineralRecommendationCommand mineralRecommendation1 = new MineralRecommendationCommand();
         mineralRecommendation1.setId(1L + no);
         mineralRecommendation1.setMineral(mineralCommand);

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Recipe Home</title>
+	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+	> <!--th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"-->
+
+	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	        crossorigin="anonymous"></script>  <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
+</head>
+<body>
+<div class="container-fluid" style="margin-top: 20px">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<form th:object="${food}" th:action="@{/foods/}" method="post">
+				<input type="hidden" th:if="${food.id != null}" th:field="*{id}"/>
+				<div class="panel panel-primary">
+					<p>
+						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/foods" th:if="${food.id != null}" th:href="@{'/foods/'+${food.id}}">&lt;
+						Back</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/foods" th:if="${food.id == null}" th:href="@{'/foods/'}">&lt;
+						Back</a>
+					</p>
+					<div class="panel-heading">
+						<h1 class="panel-title">Update Food</h1>
+					</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>ID:</label>
+								<input type="text" disabled="true" class="form-control" th:field="*{id}"/>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-3 form-group">
+								<label>Name:</label>
+								<input type="text" class="form-control" th:field="*{name}"/>
+							</div>
+						</div>
+						<div class="row">
+							<div>
+								<label>Contained Minerals:</label>
+								<div class="table-responsive">
+									<table class="table">
+										<thead>
+										<tr>
+											<th>ID</th>
+											<th>Mineral</th>
+											<th>Amount</th>
+											<th>Unit</th>
+											<th>Delete</th>
+										</tr>
+										</thead>
+										<tbody>
+										<tr th:each="amountContained, itemStat : *{containedMinerals}">
+											<td>
+												<input disabled class="form-control" th:field="*{containedMinerals[__${itemStat.index}__].id}"/>
+											</td>
+											<td>
+												<select class="form-control" name="mineralId" th:field="*{containedMinerals[__${itemStat.index}__].mineral.id}">
+													<option value="">None</option>
+													<option th:each="mineral : ${minerals}"
+													        th:selected="${mineral.id == food.containedMinerals[__${itemStat.index}__].mineral.id}"
+													        th:value="${mineral.id}"
+													        th:text="${mineral.name}">
+														Name of mineral
+													</option>
+												</select>
+											</td>
+											<td>
+												<input class="form-control" th:field="*{containedMinerals[__${itemStat.index}__].amount}"/>
+											</td>
+											<td>
+												<select class="form-control" th:if="*{containedMinerals[__${itemStat.index}__].unit != null}" name="unit" th:field="*{containedMinerals[__${itemStat.index}__].unit}">
+													<option th:each="unitOpt:${T(com.ratsoft.mineraltracker.model.Unit).values()}"
+													        th:value="${unitOpt.name()}" th:text="${unitOpt}"></option>
+												</select>
+												<select class="form-control" th:if="*{containedMinerals[__${itemStat.index}__].unit == null}" name="unit" th:field="*{containedMinerals[__${itemStat.index}__].unit}">
+													<option value="">None</option>
+													<option th:each="unitOpt:${T(com.ratsoft.mineraltracker.model.Unit).values()}"
+													        th:value="${unitOpt.name()}" th:text="${unitOpt}"></option>
+												</select>
+											</td>
+											<td>
+												<input class="form-control"  type="checkbox" name="deleteContainment" th:field="*{containedMinerals[__${itemStat.index}__].doDelete}" th:checked="${flag}" />
+											</td>
+										</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

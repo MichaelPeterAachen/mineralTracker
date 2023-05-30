@@ -1,6 +1,7 @@
 package com.ratsoft.mineraltracker.controllers;
 
-import com.ratsoft.mineraltracker.services.MineralService;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,21 +12,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+@SuppressWarnings("ProhibitedExceptionDeclared")
 @ExtendWith(MockitoExtension.class)
+@NoArgsConstructor
 public class LandingPageControllerTest {
     @InjectMocks
-    private LandingPageController landingPageController;
+    private @NonNull LandingPageController landingPageController;
 
     @Mock
-    private Model model;
+    private @NonNull Model model;
 
-    private MockMvc mockMvc;
+    private @NonNull MockMvc mockMvc;
 
 
     @BeforeEach

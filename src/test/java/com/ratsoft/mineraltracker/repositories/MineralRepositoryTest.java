@@ -1,8 +1,8 @@
 package com.ratsoft.mineraltracker.repositories;
 
-import com.ratsoft.mineraltracker.model.Food;
 import com.ratsoft.mineraltracker.model.Mineral;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author mpeter
  */
+@SuppressWarnings("PackageVisibleField")
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@NoArgsConstructor
 class MineralRepositoryTest {
 
     @Autowired
+    @NonNull
     MineralRepository mineralRepository;
 
     /**

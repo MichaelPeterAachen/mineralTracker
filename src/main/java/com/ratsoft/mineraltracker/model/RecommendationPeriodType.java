@@ -21,5 +21,5 @@ public enum RecommendationPeriodType {
     /**
      * Period of month.
      */
-    MONTH
+    MONTHS
 }

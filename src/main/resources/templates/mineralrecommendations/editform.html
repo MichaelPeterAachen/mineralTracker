@@ -15,7 +15,7 @@
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 	        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	        crossorigin="anonymous" <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->></script>
+	        crossorigin="anonymous"></script>  <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
 </head>
 <body>
 <div class="container-fluid" style="margin-top: 20px">
@@ -41,11 +41,11 @@
 						<div class="row">
 							<div class="col-md-3 form-group">
 								<label>Mineral:</label>
-								<select class="form-control" name="material.id">
+								<select class="form-control" name="mineralId">
 									<option th:each="mineral : ${minerals}"
 									        th:value="${mineral.id}"
-									        th:selected="${mineral.id.equals(mineralrecommendation.getMineralId())}"
-									        th:text="${mineral.name}">Name of material</option>
+									        th:selected="${mineralrecommendation.mineral != null and mineral.id.equals(mineralrecommendation.mineral?.id)}"
+									        th:text="${mineral.name}">Name of mineral</option>
 								</select>
 							</div>
 						</div>
@@ -66,8 +66,7 @@
 								<label>Unit:</label>
 								<select class="form-control" name="unit">
 									<option th:each="unitOpt:${T(com.ratsoft.mineraltracker.model.Unit).values()}"
-									        th:selected="${unitOpt.name().equals(mineralrecommendation.unit.name())}"
-									        th:value="${unitOpt}" th:text="${unitOpt}"></option>
+									        th:value="${unitOpt.name()}" th:text="${unitOpt}"></option>
 								</select>
 							</div>
 						</div>
@@ -82,7 +81,7 @@
 								<label>Unit:</label>
 								<select class="form-control" name="timePeriodDimension">
 									<option th:each="periodType : ${T(com.ratsoft.mineraltracker.model.RecommendationPeriodType).values()}"
-									        th:selected="${periodType.name().equals(mineralrecommendation.timePeriodDimension.name())}"
+									        th:selected="${mineralrecommendation.timePeriodDimension != null and periodType.name().equals(mineralrecommendation.timePeriodDimension.name())}"
 									        th:value="${periodType}" th:text="${periodType}"></option>
 								</select>
 							</div>

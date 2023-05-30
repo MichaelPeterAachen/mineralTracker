@@ -3,6 +3,7 @@ package com.ratsoft.mineraltracker.converters;
 import com.ratsoft.mineraltracker.commands.MineralRecommendationCommand;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
 import org.mapstruct.Mapper;
+import org.springframework.lang.Nullable;
 
 /**
  * Mapper between domain and command.
@@ -17,7 +18,8 @@ public interface MineralRecommendationMapper {
      * @param command the command object.
      * @return the domain object.
      */
-    MineralRecommendation commandToMineralRecommendation(MineralRecommendationCommand command);
+    @Nullable
+    MineralRecommendation commandToMineralRecommendation(@Nullable MineralRecommendationCommand command);
 
     /**
      * Convert mineral recommendation domain object to a command.
@@ -25,5 +27,6 @@ public interface MineralRecommendationMapper {
      * @param destination the domain object.
      * @return the command object.
      */
-    MineralRecommendationCommand mineralRecommendationToCommand(MineralRecommendation destination);
+    @Nullable
+    MineralRecommendationCommand mineralRecommendationToCommand(@Nullable MineralRecommendation destination);
 }

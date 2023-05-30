@@ -1,10 +1,13 @@
-package com.ratsoft.mineraltracker.services;
+package com.ratsoft.mineraltracker.services.it;
 
 
 import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.controllers.MineralController;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.repositories.MineralRepository;
+import com.ratsoft.mineraltracker.services.MineralService;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,31 +24,34 @@ import java.net.URI;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared"})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@NoArgsConstructor
 public class MineralServiceIT {
     @Autowired
+    @NonNull
     MineralService mineralService;
 
     @Autowired
+    @NonNull
     MineralController mineralController;
 
     @Autowired
+    @NonNull
     MineralRepository mineralRepository1;
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    private @NonNull WebApplicationContext webApplicationContext;
 
-    private MockMvc mockMvc;
+    private @NonNull MockMvc mockMvc;
 
     @BeforeEach
     public void setup() throws Exception {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                                       .build();
     }
 
@@ -61,24 +67,25 @@ public class MineralServiceIT {
         assertThat(saveMineralCommand.getId()).isGreaterThan(1L);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Transactional
     @Test
     public void testSaveofDescriptionViaController() {
         final MineralCommand mineralCommand = new MineralCommand();
-        mineralCommand.setName("NewMaterial1");
+        mineralCommand.setName("NewMineral1");
 
-        final Optional<Mineral> mineralOptionalBefore = mineralRepository1.findByName("NewMaterial1");
+        final Optional<Mineral> mineralOptionalBefore = mineralRepository1.findByName("NewMineral1");
         assertThat(mineralOptionalBefore).withFailMessage("Precondition for test not correct. Mineral already in database.")
                                          .isEmpty();
 
         final String result = mineralController.saveOrUpdateMineral(mineralCommand);
 
-        final Optional<Mineral> mineralOptional = mineralRepository1.findByName("NewMaterial1");
+        final Optional<Mineral> mineralOptional = mineralRepository1.findByName("NewMineral1");
 
         assertThat(mineralOptional).isPresent();
 
         final Mineral mineral = mineralOptional.get();
-        assertThat(mineral.getName()).isEqualTo("NewMaterial1");
+        assertThat(mineral.getName()).isEqualTo("NewMineral1");
         assertThat(mineral.getId()).isGreaterThan(1L);
     }
 
@@ -90,10 +97,12 @@ public class MineralServiceIT {
         assertThat(mineralOptionalBefore).withFailMessage("Precondition for test not correct. Mineral missing in database.")
                                          .isPresent();
 
-        Long currId = mineralOptionalBefore.get().getId();
+        final Long currId = mineralOptionalBefore.get()
+                                                 .getId();
 
         mockMvc.perform(post(URI.create("/minerals")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                                     .param("name", "Eisen2").param("id", ""+currId))
+                                                     .param("name", "Eisen2")
+                                                     .param("id", String.valueOf(currId)))
                .andExpect(status().isMovedTemporarily());
 
 

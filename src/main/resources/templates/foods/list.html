@@ -18,45 +18,43 @@
 	        crossorigin="anonymous"></script>  <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
 </head>
 <body>
-<div class="container-fluid" style="margin-top: 20px">
+<div class="container-fluid bg-3" style="margin-top: 20px">
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
-			<div class="panel panel-primary">
-				<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals">&lt; Back</a>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" th:href="@{'/minerals/'+${mineral?.id}+'/editform'}">Edit</a>
-				</p>
-
+			<div class="panel panel-default">
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/">&lt; Back</a></p>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				<div class="panel-heading">
-					<h1 class="panel-title">Mineral Details</h1>
+					<div class="row">
+						<div class="col-md-11">
+							<h1 class="panel-title" th:text="'List of Foods'">Food list</h1>
+						</div>
+						<div class="col-md-1">
+							<a class="btn btn-default" href="#" th:href="@{'/foods/newform'}" role="button">New</a>
+						</div>
+					</div>
 				</div>
 				<div class="panel-body">
-
 					<div class="table-responsive">
-						<table class="table table-hover ">
+						<table class="table table-hover">
 							<thead class="thead-inverse">
 							<tr>
 								<th>ID</th>
-								<th>Name</th>
-								<th>Image</th>
+								<th>Description</th>
+								<th>Actions</th>
 							</tr>
 							</thead>
-							<tr>
-								<td th:text="${mineral?.id}">Mineral ID</td>
-								<td th:text="${mineral?.name}">Mineral Name</td>
-								<td>
-									<img src="../../static/images/error.jpg" th:src="@{/images/fluor.jpg}" width="200" height="130">
-									<div class="row">
-										<div class="col-md-5">
-											<form  action="http:\\localhost" method="post" enctype="multipart/form-data"
-											       th:action="@{'/minerals/' + ${mineral?.id} + '/image'}">
-												<label class="control-label">Select File</label>
-												<input id="imagefile" name="imagefile" type="file" class="file">
-												<button type="submit" class="btn btn-primary">Submit</button>
-											</form>
-										</div>
-									</div>
+							<tbody>
+							<tr th:each="food: ${foods}">
+								<td th:text="${food?.id}">Food ID</td>
+								<td th:text="${food?.name}">Food name</td>
+								<td><a href="#" th:href="@{'/foods/'+${food?.id}}">View</a>
+									&nbsp;&nbsp;<a href="#" th:href="@{'/foods/'+${food?.id}+'/editform'}">Edit</a>
+
+									&nbsp;&nbsp;<a href="#" th:href="@{'/foods/'+${food?.id}+'/delete'}">Delete</a>
 								</td>
 							</tr>
+							</tbody>
 						</table>
 					</div>
 				</div>
@@ -64,6 +62,5 @@
 		</div>
 	</div>
 </div>
-
 </body>
 </html>

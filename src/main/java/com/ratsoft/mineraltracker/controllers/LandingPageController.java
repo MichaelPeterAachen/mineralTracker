@@ -1,5 +1,6 @@
 package com.ratsoft.mineraltracker.controllers;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,7 @@ public class LandingPageController {
      */
     @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = {"", "/", "/index"}, method = RequestMethod.GET)
-    public String getLandingPage(final Model model) {
+    public @NonNull String getLandingPage(final @NonNull Model model) {
         log.debug("Getting landing page");
         return "landingpage";
     }

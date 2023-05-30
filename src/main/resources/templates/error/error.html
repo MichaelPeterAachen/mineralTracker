@@ -15,7 +15,7 @@
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 	        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	        crossorigin="anonymous" <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->></script>
+	        crossorigin="anonymous"></script>  <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
 </head>
 
 <body>
@@ -23,7 +23,7 @@
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
 			<div class="panel panel-primary">
-				<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals">&lt; Back</a></p>
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:history.back()">&lt; Back</a></p>
 				<div class="alert alert-danger" role="alert">
 					<p>Error encountered:</p>
 					<p th:text='${error}'>Error encountered</p>

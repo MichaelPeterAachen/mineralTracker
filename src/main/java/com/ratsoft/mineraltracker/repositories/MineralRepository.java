@@ -1,6 +1,7 @@
 package com.ratsoft.mineraltracker.repositories;
 
 import com.ratsoft.mineraltracker.model.Mineral;
+import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
@@ -17,5 +18,5 @@ public interface MineralRepository extends CrudRepository<Mineral, Long> {
      * @param name the mineral name.
      * @return The optional mineral. if found or empty if not.
      */
-    Optional<Mineral> findByName(String name);
+    @NonNull Optional<Mineral> findByName(@NonNull String name);
 }
