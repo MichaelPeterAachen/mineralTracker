@@ -142,7 +142,9 @@ public class MineralRecommendationController {
         final Optional<Mineral> mineral = mineralService.getMineral(command.getMineralId());
         mineral.ifPresent(value -> command.setMineral(mineralMapper.mineralToCommand(value)));
         try {
-            final MineralRecommendationCommand savedCommand = mineralRecommendationService.saveMineralRecommendationCommand(command);
+            final MineralRecommendation mineralRecommendation = mineralRecommendationMapper.commandToMineralRecommendation(command);
+            final MineralRecommendation savedRecommendation = mineralRecommendationService.saveMineralRecommendation(mineralRecommendation);
+            final MineralRecommendationCommand savedCommand = mineralRecommendationMapper.mineralRecommendationToCommand(savedRecommendation);
             log.info("Saved or updated successfully: {}", savedCommand);
             return "redirect:/mineralrecommendations/" + savedCommand.getId();
         } catch (final Exception e) {

@@ -4,6 +4,7 @@ import com.ratsoft.mineraltracker.commands.AmountContainedCommand;
 import com.ratsoft.mineraltracker.commands.FoodCommand;
 import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.converters.FoodMapper;
+import com.ratsoft.mineraltracker.converters.MineralMapper;
 import com.ratsoft.mineraltracker.model.AmountContained;
 import com.ratsoft.mineraltracker.model.Food;
 import com.ratsoft.mineraltracker.model.Mineral;
@@ -14,10 +15,14 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,19 +30,27 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 @NoArgsConstructor
+@SpringBootTest
 class FoodServiceTest {
     @Mock
     private @NonNull FoodRepository foodRepository;
 
+    @Autowired
     private @NonNull FoodService foodService;
+
+    @Mock
+    private @NonNull MineralService mineralService;
+    @Autowired
+    private @NonNull FoodMapper foodMapper;
+    @Autowired
+    private @NonNull MineralMapper mineralMapper;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        final FoodMapper mapper = Mappers.getMapper(FoodMapper.class);
-
-        foodService = new FoodServiceImpl(foodRepository, mapper);
+        foodService = new FoodServiceImpl(foodRepository, foodMapper, mineralService, mineralMapper);
     }
 
     @Test
@@ -77,19 +90,25 @@ class FoodServiceTest {
 
     @Test
     public void saveFood() {
-        final Food foodNew = createFood(5L);
+        final Food foodNew = createFood(8L);
         foodNew.setId(null);
-        final Food foodSaved = createFood(5L);
+        final Food foodSaved = createFood(2L);
 
-        when(foodRepository.save(foodNew)).thenReturn(foodSaved);
+        when(foodRepository.save(any())).thenReturn(foodSaved);
 
-        final FoodCommand foodCommandNew = createFoodCommand(5L);
+        Mineral test = new Mineral(8L, "Test", null);
+        lenient().when(mineralService.getMineral(any())).thenReturn(Optional.of(test));
+
+        final FoodCommand foodCommandNew = createFoodCommand(8L);
         foodCommandNew.setId(null);
 
         final FoodCommand foodCommandNewSaved = foodService.saveFoodCommand(foodCommandNew);
 
-        assertThat(foodCommandNewSaved).usingRecursiveComparison().ignoringFields("containedMinerals").isEqualTo(foodSaved);
-        assertThat(foodCommandNewSaved.getContainedMinerals()).usingRecursiveFieldByFieldElementComparatorIgnoringFields("doDelete").isEqualTo(foodSaved.getContainedMinerals());
+        assertThat(foodCommandNewSaved).usingRecursiveComparison()
+                                       .ignoringFields("containedMinerals")
+                                       .isEqualTo(foodSaved);
+        assertThat(foodCommandNewSaved.getContainedMinerals()).usingRecursiveFieldByFieldElementComparatorIgnoringFields("doDelete")
+                                                              .isEqualTo(foodSaved.getContainedMinerals());
     }
 
     @Test
@@ -102,13 +121,15 @@ class FoodServiceTest {
     private static Food createFood(final long id) {
         final Mineral food = new Mineral(id, "SELEN" + id, null);
         final AmountContained amountContained = new AmountContained(id, food, 1.0f + id, Unit.mg, null);
-        return new Food(id, "Spinat", List.of(amountContained));
+        final List<AmountContained> amountContaineds = new ArrayList<>(List.of(amountContained));
+        return new Food(id, "Spinat", amountContaineds);
     }
 
     @SuppressWarnings("StringConcatenationMissingWhitespace")
     private static FoodCommand createFoodCommand(@NonNull final long id) {
         final MineralCommand mineralCommand = new MineralCommand(id, "SELEN" + id, null);
         final AmountContainedCommand amountContainedCommand = new AmountContainedCommand(id, mineralCommand, 1.0f + id, Unit.mg, false);
-        return new FoodCommand(id, "Spinat", List.of(amountContainedCommand));
+        final List<AmountContainedCommand> amountContainedCommands = new ArrayList<>(List.of(amountContainedCommand));
+        return new FoodCommand(id, "Spinat", amountContainedCommands);
     }
 }

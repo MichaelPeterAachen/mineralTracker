@@ -22,7 +22,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
@@ -36,8 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("ProhibitedExceptionDeclared")
 @ExtendWith(MockitoExtension.class)
@@ -84,8 +82,7 @@ public class MineralRecommendationControllerTest {
 
         final ArgumentCaptor<Set<MineralRecommendation>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
 
-        verify(model, times(1))
-                .addAttribute(eq("mineralrecommendations"), argumentCaptor.capture());
+        verify(model, times(1)).addAttribute(eq("mineralrecommendations"), argumentCaptor.capture());
 
         final Set<MineralRecommendation> resultMinerals = argumentCaptor.getValue();
         assertThat(resultMinerals).containsExactlyInAnyOrder(mineralRecommendation1, mineralRecommendation2, mineralRecommendation3);
@@ -93,8 +90,7 @@ public class MineralRecommendationControllerTest {
         mockMvc.perform(get("/mineralrecommendations"))
                .andExpect(status().isOk())
                .andExpect(view().name("mineralrecommendations/list"))
-               .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("mineralrecommendations", Matchers.equalToObject(mineralRecommendations)));
+               .andExpect(model().attribute("mineralrecommendations", Matchers.equalToObject(mineralRecommendations)));
     }
 
     @Test
@@ -108,8 +104,7 @@ public class MineralRecommendationControllerTest {
 
         final ArgumentCaptor<MineralRecommendation> argumentCaptor = ArgumentCaptor.forClass(MineralRecommendation.class);
 
-        verify(model, times(1))
-                .addAttribute(eq("mineralrecommendation"), argumentCaptor.capture());
+        verify(model, times(1)).addAttribute(eq("mineralrecommendation"), argumentCaptor.capture());
 
         final MineralRecommendation resultMinerals = argumentCaptor.getValue();
         assertThat(resultMinerals).isEqualTo(mineralRecommendation2);
@@ -117,8 +112,7 @@ public class MineralRecommendationControllerTest {
         mockMvc.perform(get("/mineralrecommendations/2"))
                .andExpect(status().isOk())
                .andExpect(view().name("mineralrecommendations/show"))
-               .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("mineralrecommendation", mineralRecommendation2));
+               .andExpect(model().attribute("mineralrecommendation", mineralRecommendation2));
     }
 
     @Test
@@ -141,10 +135,8 @@ public class MineralRecommendationControllerTest {
         mockMvc.perform(get("/mineralrecommendations/2/editform"))
                .andExpect(status().isOk())
                .andExpect(view().name("mineralrecommendations/editform"))
-               .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("mineralrecommendation", mineralRecommendationCommand))
-               .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("minerals", Set.of(mineral1, mineral2, mineral4)));
+               .andExpect(model().attribute("mineralrecommendation", mineralRecommendationCommand))
+               .andExpect(model().attribute("minerals", Set.of(mineral1, mineral2, mineral4)));
     }
 
     @Test
@@ -163,35 +155,36 @@ public class MineralRecommendationControllerTest {
         mockMvc.perform(get("/mineralrecommendations/newform"))
                .andExpect(status().isOk())
                .andExpect(view().name("mineralrecommendations/editform"))
-               .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("mineralrecommendation", mineralRecommendationCommandNew))
-               .andExpect(MockMvcResultMatchers.model()
-                                               .attribute("minerals", Set.of(mineral3, mineral4)));
+               .andExpect(model().attribute("mineralrecommendation", mineralRecommendationCommandNew))
+               .andExpect(model().attribute("minerals", Set.of(mineral3, mineral4)));
     }
 
     @Test
     void newMineral() throws Exception {
-        final MineralCommand mineralCommand2 = new MineralCommand(2L, "Selen", null);
-        final MineralRecommendationCommand mineralRecommendationSaved = buildMineralRecommendationCommand(mineralCommand2, 2, Unit.g, RecommendationPeriodType.DAYS);
-        when(mineralRecommendationService.saveMineralRecommendationCommand(any())).thenReturn(mineralRecommendationSaved);
+        final Mineral mineral2 = new Mineral(2L, "Selen", null);
+        final MineralRecommendation mineralRecommendationSaved = buildMineralRecommendation(mineral2, 2, Unit.g, RecommendationPeriodType.DAYS);
+        when(mineralRecommendationService.saveMineralRecommendation(any())).thenReturn(mineralRecommendationSaved);
 
         mockMvc.perform(post(URI.create("/mineralrecommendations")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                                                   .param("name", "NewMineral2"))
+                                                                   .param("name", "NewMineral2")
+                                                                   .param("mineralId", "2")
+                                                                   .param("mineral.name", "Eisen")
+                                                                   .param("mineral.id", "1")
+                                                                   .param("unit", "mg")
+                                                                   .param("timePeriodDimension", "HOURS"))
                .andExpect(status().isMovedTemporarily())
                .andExpect(view().name("redirect:/mineralrecommendations/3"));
     }
 
     @Test
     void newMineralException() throws Exception {
-        doThrow(IllegalArgumentException.class).when(mineralRecommendationService)
-                                               .saveMineralRecommendationCommand(any());
-
         mockMvc.perform(post(URI.create("/mineralrecommendations")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                                    .param("name", "NewMineral2"))
                .andExpect(status().isOk())
+               .andExpect(model().attributeExists("error"))
                .andExpect(view().name("error/error"));
 
-        verify(mineralRecommendationService, times(1)).saveMineralRecommendationCommand(any());
+        verify(mineralRecommendationService, times(0)).saveMineralRecommendation(any());
     }
 
 
@@ -211,6 +204,7 @@ public class MineralRecommendationControllerTest {
 
         mockMvc.perform(get("/mineralrecommendations/1/delete"))
                .andExpect(status().isOk())
+               .andExpect(model().attributeExists("error"))
                .andExpect(view().name("error/error"));
 
         verify(mineralRecommendationService, times(1)).deleteMineralRecommendation(1L);

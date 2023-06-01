@@ -1,6 +1,5 @@
 package com.ratsoft.mineraltracker.services;
 
-import com.ratsoft.mineraltracker.commands.MineralRecommendationCommand;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
 import lombok.NonNull;
@@ -32,10 +31,10 @@ public interface MineralRecommendationService {
     /**
      * Save or update a mineral recommendation in the database.
      *
-     * @param mineralRecommendationCommand the mineral recommendation to save.
-     * @return the saved mineral recommendation as a command. In case a new mineral recommendation was saved, the id is contained.
+     * @param mineralRecommendation the mineral recommendation to save.
+     * @return the saved mineral recommendation. In case a new mineral recommendation was saved, the id is contained.
      */
-    @NonNull MineralRecommendationCommand saveMineralRecommendationCommand(@NonNull MineralRecommendationCommand mineralRecommendationCommand);
+    @NonNull MineralRecommendation saveMineralRecommendation(@NonNull MineralRecommendation mineralRecommendation);
 
     /**
      * Delete a mineral recommendation.

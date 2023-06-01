@@ -24,4 +24,11 @@ public class MineralCommand {
 
     @Nullable
     private byte[] image;
+
+    /**
+     * @return true if the command is not completely inited (id is set, but name not)
+     */
+    public boolean notLoaded() {
+        return id != null && name == null;
+    }
 }

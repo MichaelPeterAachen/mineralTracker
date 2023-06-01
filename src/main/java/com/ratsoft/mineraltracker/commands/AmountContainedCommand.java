@@ -32,6 +32,6 @@ public class AmountContainedCommand {
      * @return true if the entry is empty.
      */
     public boolean isEmpty() {
-        return id == null && mineral.getId() == null && amount == 0.0f;
+        return id == null && (mineral == null || mineral.getId()== null) && amount == 0.0f && unit==null;
     }
 }

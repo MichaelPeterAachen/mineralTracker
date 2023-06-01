@@ -1,9 +1,7 @@
 package com.ratsoft.mineraltracker.services;
 
-import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.model.Mineral;
 import lombok.NonNull;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.Set;
@@ -32,10 +30,10 @@ public interface MineralService {
     /**
      * Save or update a mineral in the database.
      *
-     * @param mineralCommand the mineral to save.
-     * @return the saved mineral as a command. In case a new mineral was saved, the id is contained.
+     * @param mineral the mineral to save.
+     * @return the saved mineral. In case a new mineral was saved, the id is contained.
      */
-    @NonNull MineralCommand saveMineralCommand(@NonNull MineralCommand mineralCommand);
+    @NonNull Mineral saveMineral(@NonNull Mineral mineral);
 
     /**
      * Delete a mineral.
@@ -46,8 +44,9 @@ public interface MineralService {
 
     /**
      * Save an image for a mineral.
-     * @param id the id of the image.
+     *
+     * @param id   the id of the image.
      * @param file the image file to be added.
      */
-    void saveImageFile(@NonNull Long id, @NonNull MultipartFile file);
+    void saveImageFile(@NonNull Long id, @NonNull Byte[] file);
 }

@@ -58,13 +58,13 @@ public class MineralServiceIT {
     @Transactional
     @Test
     public void testSaveofDescriptionViaService() {
-        final MineralCommand mineralCommand = new MineralCommand();
-        mineralCommand.setName("Eisen");
+        final Mineral mineral = new Mineral();
+        mineral.setName("Eisen");
 
-        final MineralCommand saveMineralCommand = mineralService.saveMineralCommand(mineralCommand);
+        final Mineral saveMineral = mineralService.saveMineral(mineral);
 
-        assertThat(saveMineralCommand.getName()).isEqualTo("Eisen");
-        assertThat(saveMineralCommand.getId()).isGreaterThan(1L);
+        assertThat(saveMineral.getName()).isEqualTo("Eisen");
+        assertThat(saveMineral.getId()).isGreaterThan(1L);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")

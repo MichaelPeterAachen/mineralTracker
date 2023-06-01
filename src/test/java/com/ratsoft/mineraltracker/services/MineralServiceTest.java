@@ -1,6 +1,5 @@
 package com.ratsoft.mineraltracker.services;
 
-import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.converters.MineralMapper;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.repositories.MineralRepository;
@@ -13,8 +12,6 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -78,20 +75,17 @@ class MineralServiceTest {
 
     @Test
     public void saveMineral() {
-        final Mineral mineralNew = new Mineral();
-        mineralNew.setName("NEWMINERAL");
-
+        final Mineral mineralNew = new Mineral(null, "NEWMINERAL", null);
         final Mineral mineralNewSaved = new Mineral(3L, "NEWMINERAL", null);
 
         when(mineralRepository.save(mineralNew)).thenReturn(mineralNewSaved);
 
-        final MineralCommand mineralCommandNew = new MineralCommand();
-        mineralCommandNew.setName("NEWMINERAL");
+        final Mineral newMineral = new Mineral(null, "NEWMINERAL", null);
 
-        final MineralCommand mineralCommandNewSaved = mineralService.saveMineralCommand(mineralCommandNew);
+        final Mineral newMineralSaved = mineralService.saveMineral(newMineral);
 
-        assertThat(mineralCommandNewSaved.getId()).isEqualTo(3L);
-        assertThat(mineralCommandNewSaved.getName()).isEqualTo("NEWMINERAL");
+        assertThat(newMineralSaved.getId()).isEqualTo(3L);
+        assertThat(newMineralSaved.getName()).isEqualTo("NEWMINERAL");
     }
 
     @Test
@@ -104,22 +98,34 @@ class MineralServiceTest {
     @Test
     void saveImageFile() throws IOException {
         final Long id = 1L;
-        final MultipartFile multipartFile = new MockMultipartFile("imagefile","testing.txt","text/plain","Spring Framework Test".getBytes(StandardCharsets.UTF_8));
+        // TODO final MultipartFile multipartFile = new MockMultipartFile("imagefile", "testing.txt", "text/plain", "Spring Framework Test".getBytes(StandardCharsets.UTF_8));
 
         final Mineral mineral = new Mineral(id, "TestMineral", null);
-
         final Optional<Mineral> mineralOptional = Optional.of(mineral);
 
         when(mineralRepository.findById(anyLong())).thenReturn(mineralOptional);
 
-        final ArgumentCaptor<Mineral> argumentCaptor = ArgumentCaptor.forClass(Mineral.class);
+        final byte[] imageBytes = "Spring Framework Test".getBytes(StandardCharsets.UTF_8);
 
-        mineralService.saveImageFile(id, multipartFile);
+        final Byte[] imageDomain = transformImageForDomain(imageBytes);
+
+        mineralService.saveImageFile(id, imageDomain);
+
+        final ArgumentCaptor<Mineral> argumentCaptor = ArgumentCaptor.forClass(Mineral.class);
 
         verify(mineralRepository, times(1)).save(argumentCaptor.capture());
 
         final Mineral savedMineral = argumentCaptor.getValue();
 
-        assertThat(multipartFile.getBytes().length). isEqualTo(savedMineral.getImage().length);
+        assertThat(imageDomain.length).isEqualTo(savedMineral.getImage().length);
+        assertThat(imageDomain).isEqualTo(savedMineral.getImage());
+    }
+
+    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) throws IOException {
+        final Byte[] imageByteObject = new Byte[imageBytes.length];
+        for (int i = 0; i < imageBytes.length; i++) {
+            imageByteObject[i] = imageBytes[i];
+        }
+        return imageByteObject;
     }
 }

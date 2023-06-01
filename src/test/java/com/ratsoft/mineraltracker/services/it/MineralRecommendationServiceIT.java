@@ -67,11 +67,11 @@ public class MineralRecommendationServiceIT {
     @Transactional
     @Test
     public void testSaveofDescriptionViaService() {
-        final MineralCommand newMineral = new MineralCommand(3L, "Mangan", null);
-        final MineralRecommendationCommand mineralRecommendationCommand = buildMineralRecommendationCommand(newMineral, 1, Unit.µg, RecommendationPeriodType.DAYS);
-        mineralRecommendationCommand.setId(null);
+        final Mineral newMineral = new Mineral(3L, "Mangan", null);
+        final MineralRecommendation mineralRecommendation = buildMineralRecommendation(newMineral, 1, Unit.µg, RecommendationPeriodType.DAYS);
+        mineralRecommendation.setId(null);
 
-        final MineralRecommendationCommand saveMineralCommand = recommendationService.saveMineralRecommendationCommand(mineralRecommendationCommand);
+        final MineralRecommendation saveMineralCommand = recommendationService.saveMineralRecommendation(mineralRecommendation);
 
         assertThat(saveMineralCommand.getMineral()).isEqualTo(newMineral);
         assertThat(saveMineralCommand.getId()).isGreaterThan(1L);

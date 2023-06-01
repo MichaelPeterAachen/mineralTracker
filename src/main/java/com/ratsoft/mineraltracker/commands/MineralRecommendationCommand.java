@@ -19,22 +19,22 @@ public class MineralRecommendationCommand {
     @Nullable
     private Long id;
 
-    private @NonNull MineralCommand mineral;
+    private @Nullable MineralCommand mineral;
 
-    private @NonNull Long mineralid;
+    private @Nullable Long mineralid;
 
     private float minAmount;
     private float maxAmount;
 
-    private @NonNull Unit unit;
+    private @Nullable Unit unit;
 
     private long timePeriodLength;
 
-    private @NonNull RecommendationPeriodType timePeriodDimension;
+    private @Nullable RecommendationPeriodType timePeriodDimension;
 
     @Nullable
     public Long getMineralId() {
-        return mineral.getId();
+        return mineralid;
     }
 
     public void setMineralId(final @NonNull Long id) {

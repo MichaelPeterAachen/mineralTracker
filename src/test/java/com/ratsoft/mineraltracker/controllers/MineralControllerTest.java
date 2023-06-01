@@ -15,11 +15,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -32,7 +34,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SuppressWarnings("ProhibitedExceptionDeclared")
+@SuppressWarnings({"ProhibitedExceptionDeclared", "MissingJavadoc", "HardcodedFileSeparator"})
 @ExtendWith(MockitoExtension.class)
 @NoArgsConstructor
 public class MineralControllerTest {
@@ -70,8 +72,7 @@ public class MineralControllerTest {
 
         final ArgumentCaptor<Set<Mineral>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
 
-        verify(model, times(1))
-                .addAttribute(eq("minerals"), argumentCaptor.capture());
+        verify(model, times(1)).addAttribute(eq("minerals"), argumentCaptor.capture());
 
         final Set<Mineral> resultMinerals = argumentCaptor.getValue();
         assertThat(resultMinerals).containsExactlyInAnyOrder(mineral1, mineral2, mineral3);
@@ -79,8 +80,7 @@ public class MineralControllerTest {
         mockMvc.perform(get("/minerals"))
                .andExpect(status().isOk())
                .andExpect(view().name("minerals/list"))
-               .andExpect(model()
-                       .attribute("minerals", Matchers.equalToObject(mineralList)));
+               .andExpect(model().attribute("minerals", Matchers.equalToObject(mineralList)));
     }
 
     @Test
@@ -93,8 +93,7 @@ public class MineralControllerTest {
 
         final ArgumentCaptor<Mineral> argumentCaptor = ArgumentCaptor.forClass(Mineral.class);
 
-        verify(model, times(1))
-                .addAttribute(eq("mineral"), argumentCaptor.capture());
+        verify(model, times(1)).addAttribute(eq("mineral"), argumentCaptor.capture());
 
         final Mineral resultMinerals = argumentCaptor.getValue();
         assertThat(resultMinerals).isEqualTo(mineral2);
@@ -102,8 +101,42 @@ public class MineralControllerTest {
         mockMvc.perform(get("/minerals/2"))
                .andExpect(status().isOk())
                .andExpect(view().name("minerals/show"))
-               .andExpect(model()
-                       .attribute("mineral", mineral2));
+               .andExpect(model().attribute("mineral", mineral2));
+    }
+
+    @Test
+    void getMineralWithImage() throws Exception {
+        final @NonNull Byte[] testImage = transformImageForDomain("This is a test text".getBytes(StandardCharsets.UTF_8));
+
+        final Mineral mineral = new Mineral(1L, "TestMineral", testImage);
+        final Optional<Mineral> mineralOptional = Optional.of(mineral);
+
+        when(mineralService.getMineral(anyLong())).thenReturn(mineralOptional);
+
+        mockMvc.perform(get("/minerals/1"))
+               .andExpect(status().isOk())
+               .andExpect(view().name("minerals/show"))
+               .andExpect(model().attribute("mineral", mineral));
+    }
+
+    @Test
+    void getImageForMineral() throws Exception {
+        final byte[] imageRaw = "This is a test text".getBytes(StandardCharsets.UTF_8);
+        final @NonNull Byte[] rawImageAsByte = transformImageForDomain(imageRaw);
+
+        final Mineral mineral = new Mineral(1L, "TestMineral", rawImageAsByte);
+        final Optional<Mineral> mineralOptional = Optional.of(mineral);
+
+        when(mineralService.getMineral(anyLong())).thenReturn(mineralOptional);
+
+        final MockHttpServletResponse response = mockMvc.perform(get("/minerals/1/image"))
+                                                        .andExpect(status().isOk())
+                                                        .andReturn()
+                                                        .getResponse();
+
+        final byte[] responseBytes = response.getContentAsByteArray();
+
+        assertThat(responseBytes).isEqualTo(imageRaw);
     }
 
     @Test
@@ -116,8 +149,7 @@ public class MineralControllerTest {
         mockMvc.perform(get("/minerals/2/editform"))
                .andExpect(status().isOk())
                .andExpect(view().name("minerals/editform"))
-               .andExpect(model()
-                       .attribute("mineral", mineralCommand2));
+               .andExpect(model().attribute("mineral", mineralCommand2));
     }
 
     @Test
@@ -127,18 +159,14 @@ public class MineralControllerTest {
         mockMvc.perform(get("/minerals/newform"))
                .andExpect(status().isOk())
                .andExpect(view().name("minerals/editform"))
-               .andExpect(model()
-                       .attribute("mineral", mineralCommandNew));
+               .andExpect(model().attribute("mineral", mineralCommandNew));
     }
 
     @Test
     void newMineral() throws Exception {
-        final MineralCommand mineralCommandNew = new MineralCommand();
-        mineralCommandNew.setName("NewMineral2");
+        final Mineral mineralNewSaved = new Mineral(3L, "NewMineral", null);
 
-        final MineralCommand mineralCommandNewSaved = new MineralCommand(3L, "NewMineral", null);
-
-        when(mineralService.saveMineralCommand(any())).thenReturn(mineralCommandNewSaved);
+        when(mineralService.saveMineral(any())).thenReturn(mineralNewSaved);
 
         mockMvc.perform(post(URI.create("/minerals")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                      .param("name", "NewMineral2"))
@@ -165,4 +193,35 @@ public class MineralControllerTest {
 
         verify(mineralService, times(1)).saveImageFile(anyLong(), any());
     }
+
+    @Test
+    void uploadImageError() throws Exception {
+        final MockMultipartFile multiplartFile = new MockMultipartFile("imagefile", "testing.txt", "text/plain", "Spring Framework Gutu".getBytes(StandardCharsets.UTF_8));
+        final MockMultipartFile newMock = mock(MockMultipartFile.class);
+        when(newMock.getName()).thenReturn("imagefile");
+        when(newMock.getBytes()).thenThrow(new IOException("Exception accessing bytes"));
+
+        mockMvc.perform(multipart("/minerals/1/image").file(newMock))
+               .andExpect(status().isOk())
+               .andExpect(model().attributeExists("error"))
+               .andExpect(view().name("error/error"));
+    }
+
+    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) throws IOException {
+        final Byte[] imageByteObject = new Byte[imageBytes.length];
+        for (int i = 0; i < imageBytes.length; i++) {
+            imageByteObject[i] = imageBytes[i];
+        }
+        return imageByteObject;
+    }
+
+    private static @NonNull byte @NonNull [] transformImageForController(final @NonNull Byte @NonNull [] imageBytes) throws IOException {
+        final byte[] imageByteObject = new byte[imageBytes.length];
+        for (int i = 0; i < imageBytes.length; i++) {
+            imageByteObject[i] = imageBytes[i];
+        }
+        return imageByteObject;
+    }
+
+
 }

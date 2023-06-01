@@ -44,11 +44,14 @@
 								<td th:text="${mineral?.id}">Mineral ID</td>
 								<td th:text="${mineral?.name}">Mineral Name</td>
 								<td>
-									<img src="../../static/images/error.jpg" th:src="@{/images/fluor.jpg}" width="200" height="130">
 									<div class="row">
 										<div class="col-md-5">
-											<form  action="http:\\localhost" method="post" enctype="multipart/form-data"
-											       th:action="@{'/minerals/' + ${mineral?.id} + '/image'}">
+											<img src="../../static/images/error.jpg"
+											     th:src="@{'/minerals/' + ${mineral.id} + '/image'}"
+											     width="200" height="200">
+
+											<form action="http:\\localhost" method="post" enctype="multipart/form-data"
+											      th:action="@{'/minerals/' + ${mineral?.id} + '/image'}">
 												<label class="control-label">Select File</label>
 												<input id="imagefile" name="imagefile" type="file" class="file">
 												<button type="submit" class="btn btn-primary">Submit</button>

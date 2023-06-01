@@ -27,9 +27,10 @@ public class Food {
 
     // TODO: This should be NonNull, but then the mapper is not working, if a food is enhanced with a new amountContained entry.
     // To fix this, the food must be mapped and the minerals must be loaded.
-    private @Nullable String name;
+    @Nullable
+    private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "food", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "food", orphanRemoval = true)
     private @NonNull List<AmountContained> containedMinerals = new ArrayList<>(5);
 
     @SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")

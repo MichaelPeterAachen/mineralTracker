@@ -1,6 +1,5 @@
 package com.ratsoft.mineraltracker.services.impl;
 
-import com.ratsoft.mineraltracker.commands.MineralRecommendationCommand;
 import com.ratsoft.mineraltracker.converters.MineralRecommendationMapper;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
@@ -41,22 +40,19 @@ public class MineralRecommendationServiceImpl implements MineralRecommendationSe
     }
 
     @Override
-    public Optional<MineralRecommendation> getMineralRecommendation(@NonNull final Long id) {
+    public Optional<MineralRecommendation> getMineralRecommendation(final @NonNull Long id) {
         return mineralRecommendationRepository.findById(id);
     }
 
     @Override
-    public MineralRecommendationCommand saveMineralRecommendationCommand(@NonNull final MineralRecommendationCommand mineralRecommendationCommand) {
-        log.debug("Save or update mineral recommendation command: {}", mineralRecommendationCommand);
-        final MineralRecommendation mineralRecommendation = mapper.commandToMineralRecommendation(mineralRecommendationCommand);
-        log.debug("Save or update mineral recommendation: {}", mineralRecommendation);
-        final MineralRecommendation mineralRecommendationSaved = mineralRecommendationRepository.save(mineralRecommendation);
-        return mapper.mineralRecommendationToCommand(mineralRecommendationSaved);
+    public MineralRecommendation saveMineralRecommendation(final @NonNull MineralRecommendation mineralRecommendation) {
+        log.debug("Save or update mineral recommendation command: {}", mineralRecommendation);
+        return mineralRecommendationRepository.save(mineralRecommendation);
     }
 
 
     @Override
-    public void deleteMineralRecommendation(@NonNull final Long id) {
+    public void deleteMineralRecommendation(final @NonNull Long id) {
         log.debug("Delete mineral recommendation: {}", id);
         mineralRecommendationRepository.deleteById(id);
     }
@@ -73,7 +69,7 @@ public class MineralRecommendationServiceImpl implements MineralRecommendationSe
     }
 
     @Override
-    public Optional<MineralRecommendation> findRecommendationForMineral(@NonNull final String mineral) {
+    public Optional<MineralRecommendation> findRecommendationForMineral(final @NonNull String mineral) {
         final Iterable<MineralRecommendation> allMinerals = mineralRecommendationRepository.findAll();
         for (final MineralRecommendation recommendation : allMinerals) {
             if (recommendation.isForMineral(mineral)) {

@@ -61,6 +61,9 @@ public class FoodServiceIT {
     FoodRepository foodRepository;
 
     @Autowired
+    FoodMapper foodMapper;
+
+    @Autowired
     private @NonNull WebApplicationContext webApplicationContext;
 
     @Mock
@@ -130,9 +133,7 @@ public class FoodServiceIT {
         final int amountBefore = foodBefore.getContainedMinerals()
                                            .size();
 
-        final FoodMapper mapper = Mappers.getMapper(FoodMapper.class);
-
-        final FoodCommand foodCommand = mapper.foodToCommand(foodBefore);
+        final FoodCommand foodCommand = foodMapper.foodToCommand(foodBefore);
         foodCommand.getContainedMinerals()
                    .get(0)
                    .setDoDelete(true);

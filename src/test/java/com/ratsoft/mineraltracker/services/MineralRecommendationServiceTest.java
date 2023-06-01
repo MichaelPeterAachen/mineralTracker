@@ -99,15 +99,13 @@ class MineralRecommendationServiceTest {
         when(mineralRecommendationRepository.save(mineralRecommendation)).thenReturn(mineralRecommendationSaved);
 
         // When
-        final MineralCommand mineralCommand = new MineralCommand(2L, "Selen", null);
+        final MineralRecommendation mineralRecommendationInput = buildMineralRecommendation(mineral, 1L, Unit.g, RecommendationPeriodType.DAYS);
+        mineralRecommendationInput.setId(null);
 
-        final MineralRecommendationCommand mineralRecommendationCommandInput = buildMineralRecommendationCommand(mineralCommand, 1L, Unit.g, RecommendationPeriodType.DAYS);
-        mineralRecommendationCommandInput.setId(null);
-
-        final MineralRecommendationCommand mineralRecommendationReturned = mineralRecommendationService.saveMineralRecommendationCommand(mineralRecommendationCommandInput);
+        final MineralRecommendation mineralRecommendationReturned = mineralRecommendationService.saveMineralRecommendation(mineralRecommendationInput);
 
         // Then
-        final MineralRecommendationCommand mineralCommandNewExpected = buildMineralRecommendationCommand(mineralCommand, 1L, Unit.g, RecommendationPeriodType.DAYS);
+        final MineralRecommendation mineralCommandNewExpected = buildMineralRecommendation(mineral, 1L, Unit.g, RecommendationPeriodType.DAYS);
 
         assertThat(mineralRecommendationReturned.getId()).isEqualTo(2L);
         assertThat(mineralRecommendationReturned).isEqualTo(mineralCommandNewExpected);

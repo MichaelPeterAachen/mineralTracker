@@ -1,6 +1,5 @@
 package com.ratsoft.mineraltracker.services.impl;
 
-import com.ratsoft.mineraltracker.commands.MineralCommand;
 import com.ratsoft.mineraltracker.converters.MineralMapper;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.repositories.MineralRepository;
@@ -9,9 +8,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,27 +39,36 @@ public class MineralServiceImpl implements MineralService {
     }
 
     @Override
-    public Optional<Mineral> getMineral(@NonNull final Long id) {
+    public Optional<Mineral> getMineral(final Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
         return mineralRepository.findById(id);
     }
 
     @Override
-    public MineralCommand saveMineralCommand(@NonNull final MineralCommand mineralCommand) {
-        log.debug("Save or update mineral: {}",mineralCommand);
-        final Mineral mineral = mapper.commandToMineral(mineralCommand);
-        final Mineral mineralSaved = mineralRepository.save(mineral);
-        return mapper.mineralToCommand(mineralSaved);
+    public Mineral saveMineral(final @NonNull Mineral mineral) {
+        log.debug("Save or update mineral: {}", mineral);
+        return mineralRepository.save(mineral);
     }
 
     @Override
-    public void deleteMineral(@NonNull final Long id) {
-        log.debug("Delete mineral: {}",id);
+    public void deleteMineral(final @NonNull Long id) {
+        log.debug("Delete mineral: {}", id);
         mineralRepository.deleteById(id);
     }
 
     @Override
-    public void saveImageFile(@NonNull final Long id, @NonNull final MultipartFile file) {
-        log.info("Save image for mineral {}",id);
+    public void saveImageFile(final @NonNull Long id, final @NonNull Byte[] imageBytes) {
+        log.info("Save image for mineral {}", id);
+        final Optional<Mineral> mineralOptional = mineralRepository.findById(id);
+        if (mineralOptional.isEmpty()) {
+            throw new NoSuchElementException("No mineral id " + id + " found for saving image to.");
+        }
 
+        final Mineral mineral = mineralOptional.get();
+        mineral.setImage(imageBytes);
+
+        mineralRepository.save(mineral);
     }
 }

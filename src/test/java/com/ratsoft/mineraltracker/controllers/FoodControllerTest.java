@@ -16,15 +16,17 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.net.URI;
 import java.util.List;
@@ -42,10 +44,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("ProhibitedExceptionDeclared")
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 @NoArgsConstructor
 public class FoodControllerTest {
 
+    @Autowired
     private @NonNull FoodController foodController;
+
+    @Autowired
+    private @NonNull FoodMapper foodMapper;
 
     @Mock
     private @NonNull FoodService foodService;
@@ -60,7 +67,7 @@ public class FoodControllerTest {
 
     @BeforeEach
     void setUp() {
-        foodController = new FoodController(foodService, Mappers.getMapper(FoodMapper.class), mineralService);
+        foodController = new FoodController(foodService, foodMapper, mineralService);
         mockMvc = MockMvcBuilders.standaloneSetup(foodController)
                                  .build();
     }
@@ -98,15 +105,7 @@ public class FoodControllerTest {
 
         when(foodService.getFood(2L)).thenReturn(Optional.of(food2));
 
-        final String result = foodController.showFood("2", model);
-
-        final ArgumentCaptor<Food> argumentCaptor = ArgumentCaptor.forClass(Food.class);
-
-        verify(model, times(1))
-                .addAttribute(eq("food"), argumentCaptor.capture());
-
-        final Food resultFoods = argumentCaptor.getValue();
-        assertThat(resultFoods).isEqualTo(food2);
+        final ModelAndView result = foodController.showFood("2");
 
         mockMvc.perform(get("/foods/2"))
                .andExpect(status().isOk())

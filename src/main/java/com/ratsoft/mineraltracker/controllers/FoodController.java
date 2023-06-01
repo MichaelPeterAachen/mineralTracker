@@ -13,10 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +29,7 @@ import java.util.Set;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/foods")
 public class FoodController {
 
     private final @NonNull FoodService foodService;
@@ -45,7 +44,7 @@ public class FoodController {
      * @param model the model for the template.
      * @return the template name.
      */
-    @GetMapping({"/foods", "/foods/"})
+    @GetMapping({"", "/"})
     public @NonNull String listFoods(final Model model) {
         log.debug("Getting food list");
 
@@ -59,19 +58,19 @@ public class FoodController {
     /**
      * Get a food by it's id, add it to the model and return the name of the template.
      *
-     * @param id    the id of the food.
-     * @param model the model for the template.
+     * @param id the id of the food.
      * @return the template name.
      */
-    @SuppressWarnings("NestedMethodCall")
-    @GetMapping("/foods/{id}")
-    public @NonNull String showFood(@PathVariable final @NonNull String id, final @NonNull Model model) {
+    @GetMapping("/{id}")
+    public @NonNull ModelAndView showFood(@PathVariable final @NonNull String id) {
         log.debug("Getting food with id: {}", id);
 
-        final Optional<Food> food = foodService.getFood(Long.valueOf(id));
-        food.ifPresent(value -> model.addAttribute("food", value));
+        final ModelAndView mav = new ModelAndView("foods/show");
 
-        return "foods/show";
+        final Optional<Food> food = foodService.getFood(Long.valueOf(id));
+        food.ifPresent(value -> mav.addObject("food", value));
+
+        return mav;
     }
 
     /**
@@ -82,7 +81,7 @@ public class FoodController {
      * @return the template name or editing.
      */
     @SuppressWarnings("NestedMethodCall")
-    @GetMapping("/foods/{id}/editform")
+    @GetMapping("/{id}/editform")
     public @NonNull String getEditFoodForm(@PathVariable final @NonNull String id, final @NonNull Model model) {
         log.debug("Getting edit form for a food with id: {}", id);
 
@@ -122,8 +121,8 @@ public class FoodController {
      * @return the template name or editing.
      */
     @SuppressWarnings("NestedMethodCall")
-    @GetMapping("/foods/newform")
-    public @NonNull String getNewFoodForm(@NonNull final Model model) {
+    @GetMapping("/newform")
+    public @NonNull String getNewFoodForm(final @NonNull Model model) {
         log.debug("Getting new food form.");
 
         final Food food = new Food();
@@ -150,17 +149,13 @@ public class FoodController {
      * @param command the command to save or update.
      * @return New page being shown afterwars.
      */
-    @PostMapping({"/foods", "/foods/"})
+    @PostMapping({"", "/"})
     public @NonNull String saveOrUpdateFood(@ModelAttribute final @NonNull FoodCommand command) {
         log.info("Request to save or update food: {}", command);
 
-        command.removeEntryContainments();
-        command.removeDeletedContainments();
-
         final FoodCommand savedCommand = foodService.saveFoodCommand(command);
 
-        log.info("Saved or updated successfully: {}", savedCommand);
-        return "redirect:/foods/" + savedCommand.getId()+ "/editform";
+        return "redirect:/foods/" + savedCommand.getId() + "/editform";
     }
 
     /**
@@ -171,7 +166,7 @@ public class FoodController {
      * @return New page being shown afterwars.
      */
     @SuppressWarnings("OverlyBroadCatchBlock")
-    @GetMapping({"/foods/{id}/delete", "/foods/{id}/delete/"})
+    @GetMapping({"/{id}/delete", "/{id}/delete/"})
     public @NonNull String deleteFood(@PathVariable final @NonNull String id, final @NonNull Model model) {
         log.info("Request to delete a food: {}", id);
         try {
