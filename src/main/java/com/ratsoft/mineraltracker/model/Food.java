@@ -33,6 +33,11 @@ public class Food {
     @OneToMany(cascade = CascadeType.MERGE, mappedBy = "food", orphanRemoval = true)
     private @NonNull List<AmountContained> containedMinerals = new ArrayList<>(5);
 
+    /**
+     * Set the contained minerals list.
+     *
+     * @param containedMinerals the new contained minerals.
+     */
     @SuppressWarnings("AssignmentOrReturnOfFieldWithMutableType")
     public void setContainedMinerals(final List<AmountContained> containedMinerals) {
         for (final AmountContained containedMineral : containedMinerals) {

@@ -67,7 +67,7 @@ public class MineralRecommendationController {
      */
     @SuppressWarnings("NestedMethodCall")
     @GetMapping("/mineralrecommendations/{id}")
-    public @NonNull String showMineralRecommendation(@PathVariable final @NonNull String id, final @NonNull Model model) {
+    public @NonNull String showMineralRecommendation(@SuppressWarnings("SameParameterValue") @PathVariable final @NonNull String id, final @NonNull Model model) {
         log.debug("Getting mineral recommendation with id: {}", id);
 
         final Optional<MineralRecommendation> mineral = mineralRecommendationService.getMineralRecommendation(Long.valueOf(id));
@@ -135,17 +135,20 @@ public class MineralRecommendationController {
      * @param model   the model for the page.
      * @return New page being shown afterwars.
      */
-    @SuppressWarnings("OverlyBroadCatchBlock")
+    @SuppressWarnings({"OverlyBroadCatchBlock", "FeatureEnvy", "NestedMethodCall"})
     @PostMapping({"/mineralrecommendations", "/mineralrecommendations/"})
     public @NonNull String saveOrUpdateMineralRecommendation(@ModelAttribute final @NonNull MineralRecommendationCommand command, final @NonNull Model model) {
         log.info("Request to save or update mineral recommendation : {}", command);
+        //noinspection DataFlowIssue
         final Optional<Mineral> mineral = mineralService.getMineral(command.getMineralId());
         mineral.ifPresent(value -> command.setMineral(mineralMapper.mineralToCommand(value)));
         try {
             final MineralRecommendation mineralRecommendation = mineralRecommendationMapper.commandToMineralRecommendation(command);
+            //noinspection DataFlowIssue
             final MineralRecommendation savedRecommendation = mineralRecommendationService.saveMineralRecommendation(mineralRecommendation);
             final MineralRecommendationCommand savedCommand = mineralRecommendationMapper.mineralRecommendationToCommand(savedRecommendation);
             log.info("Saved or updated successfully: {}", savedCommand);
+            //noinspection DataFlowIssue
             return "redirect:/mineralrecommendations/" + savedCommand.getId();
         } catch (final Exception e) {
             model.addAttribute("error", "Mineral recommendation could not be saved or updated. " + e.getMessage());
@@ -164,13 +167,7 @@ public class MineralRecommendationController {
     @GetMapping({"/mineralrecommendations/{id}/delete", "/mineralrecommendations/{id}/delete/"})
     public @NonNull String deleteMineralRecommendation(@PathVariable final @NonNull String id, final @NonNull Model model) {
         log.info("Request to delete a mineral recommentation: {}", id);
-        try {
-            mineralRecommendationService.deleteMineralRecommendation(Long.valueOf(id));
-        } catch (final Exception e) {
-            model.addAttribute("error", "Mineral recommendation could not be removed, it is still in use. " + e.getMessage());
-            log.error("Deleting mineral recommendation failed: {}", e.getMessage());
-            return "error/error";
-        }
+        mineralRecommendationService.deleteMineralRecommendation(Long.valueOf(id));
         return "redirect:/mineralrecommendations";
     }
 }

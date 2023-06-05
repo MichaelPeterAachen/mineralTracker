@@ -59,7 +59,7 @@ public class MineralServiceImpl implements MineralService {
     }
 
     @Override
-    public void saveImageFile(final @NonNull Long id, final @NonNull Byte[] imageBytes) {
+    public void saveImageFile(final @NonNull Long id, final @NonNull Byte @NonNull [] imageBytes) {
         log.info("Save image for mineral {}", id);
         final Optional<Mineral> mineralOptional = mineralRepository.findById(id);
         if (mineralOptional.isEmpty()) {

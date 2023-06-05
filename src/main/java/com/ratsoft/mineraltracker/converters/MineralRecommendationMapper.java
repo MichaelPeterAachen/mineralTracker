@@ -2,13 +2,8 @@ package com.ratsoft.mineraltracker.converters;
 
 import com.ratsoft.mineraltracker.commands.MineralRecommendationCommand;
 import com.ratsoft.mineraltracker.model.MineralRecommendation;
-import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.TargetType;
 import org.springframework.lang.Nullable;
-
-import java.lang.annotation.Target;
 
 /**
  * Mapper between domain and command.

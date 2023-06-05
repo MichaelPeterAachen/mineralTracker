@@ -19,24 +19,36 @@ public class MineralRecommendationCommand {
     @Nullable
     private Long id;
 
-    private @Nullable MineralCommand mineral;
+    @Nullable
+    private MineralCommand mineral;
 
-    private @Nullable Long mineralid;
+    @Nullable
+    private Long mineralid;
 
     private float minAmount;
     private float maxAmount;
 
-    private @Nullable Unit unit;
+    @Nullable
+    private Unit unit;
 
     private long timePeriodLength;
 
-    private @Nullable RecommendationPeriodType timePeriodDimension;
+    @Nullable
+    private RecommendationPeriodType timePeriodDimension;
 
+    /**
+     * @return the id of the mineral as a Long. This is required for the web pages.
+     */
     @Nullable
     public Long getMineralId() {
         return mineralid;
     }
 
+    /**
+     * Set the id of the mineral as a Long. This is required for the web pages.
+     *
+     * @param id the id of the mineral.
+     */
     public void setMineralId(final @NonNull Long id) {
         mineralid = id;
     }

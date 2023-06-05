@@ -61,7 +61,7 @@ public class MineralController {
      */
     @SuppressWarnings("NestedMethodCall")
     @GetMapping("/minerals/{id}")
-    public @NonNull String showMineral(@PathVariable final @NonNull String id, final @NonNull Model model) {
+    public @NonNull String showMineral(@SuppressWarnings("SameParameterValue") @PathVariable final @NonNull String id, final @NonNull Model model) {
         log.debug("Getting mineral with id: {}", id);
 
         final Optional<Mineral> mineral = mineralService.getMineral(Long.valueOf(id));
@@ -117,10 +117,12 @@ public class MineralController {
 
         final Mineral mineral = mineralMapper.commandToMineral(command);
 
+        //noinspection DataFlowIssue
         final Mineral mineralSaved = mineralService.saveMineral(mineral);
 
         final MineralCommand savedCommand = mineralMapper.mineralToCommand(mineralSaved);
 
+        //noinspection DataFlowIssue
         return "redirect:/minerals/" + savedCommand.getId();
     }
 
@@ -131,16 +133,10 @@ public class MineralController {
      * @param model the model for the templates.
      * @return New page being shown afterwars.
      */
-    @SuppressWarnings("OverlyBroadCatchBlock")
     @GetMapping({"/minerals/{id}/delete", "/minerals/{id}/delete/"})
     public @NonNull String deleteMineral(@PathVariable final @NonNull String id, final @NonNull Model model) {
         log.info("Request to delete a mineral: {}", id);
-        try {
-            mineralService.deleteMineral(Long.valueOf(id));
-        } catch (final Exception e) {
-            model.addAttribute("error", "Mineral could not be removed, it is still in use.");
-            return "error/error";
-        }
+        mineralService.deleteMineral(Long.valueOf(id));
         return "redirect:/minerals";
     }
 
@@ -159,13 +155,17 @@ public class MineralController {
         if (mineralOptional.isPresent()) {
             final Mineral mineral = mineralOptional.get();
             final Byte[] imageAsByte = mineral.getImage();
+            if (imageAsByte == null) {
+                log.error("Image is null for id {}", id);
+                return;
+            }
             try {
                 final byte[] image = transformImageForController(imageAsByte);
                 response.setContentType("image/jpeg");
                 final InputStream is = new ByteArrayInputStream(image);
                 IOUtils.copy(is, response.getOutputStream());
             } catch (final IOException e) {
-                throw new RuntimeException(e);
+                log.error("Caught exception handling Image for id {}: {}", id, e);
             }
         }
     }
@@ -177,21 +177,18 @@ public class MineralController {
      * @param file  the image file
      * @param model the mvc model
      * @return the name of the template to display.
+     * @throws IOException in case the image could not be parsed.
      */
     @PostMapping("/minerals/{id}/image")
-    public @NonNull String uploadImageForMineral(@PathVariable final @NonNull String id, @RequestParam("imagefile") final @NonNull MultipartFile file, final @NonNull Model model) {
-        try {
-            final Byte[] imageByteObject = transformImageForDomain(file.getBytes());
+    public @NonNull String uploadImageForMineral(@PathVariable final @NonNull String id, @RequestParam("imagefile") final @NonNull MultipartFile file, final @NonNull Model model) throws IOException {
+        final byte[] bytes = file.getBytes();
+        final Byte[] imageByteObject = transformImageForDomain(bytes);
 
-            mineralService.saveImageFile(Long.valueOf(id), imageByteObject);
-        } catch (final IOException e) {
-            model.addAttribute("error", "Image for mineral " + id + " could not be saved:" + e);
-            return "error/error";
-        }
+        mineralService.saveImageFile(Long.valueOf(id), imageByteObject);
         return "redirect:/minerals/" + id + "/editform";
     }
 
-    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) throws IOException {
+    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) {
         final Byte[] imageByteObject = new Byte[imageBytes.length];
         for (int i = 0; i < imageBytes.length; i++) {
             imageByteObject[i] = imageBytes[i];
@@ -200,7 +197,7 @@ public class MineralController {
     }
 
 
-    private static @NonNull byte @NonNull [] transformImageForController(final @NonNull Byte @NonNull [] imageBytes) throws IOException {
+    private static @NonNull byte @NonNull [] transformImageForController(final @NonNull Byte @NonNull [] imageBytes) {
         final byte[] imageByteObject = new byte[imageBytes.length];
         for (int i = 0; i < imageBytes.length; i++) {
             imageByteObject[i] = imageBytes[i];

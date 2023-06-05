@@ -50,5 +50,11 @@ public interface MineralRecommendationService {
      */
     @NonNull Set<Mineral> getMineralsAlreadyUsed();
 
+    /**
+     * Find the recommendation for a given mineral.
+     *
+     * @param mineral the mineral of interest.
+     * @return the recommendation for this mineral if present.
+     */
     @NonNull Optional<MineralRecommendation> findRecommendationForMineral(@NonNull String mineral);
 }

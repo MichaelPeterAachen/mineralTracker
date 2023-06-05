@@ -9,7 +9,7 @@ import org.springframework.lang.Nullable;
  *
  * @author mpeter
  */
-@SuppressWarnings("ClassWithoutConstructor")
+@SuppressWarnings({"ClassWithoutConstructor", "ClassIndependentOfModule"})
 @SpringBootApplication
 public class MineralTrackerApplication {
 

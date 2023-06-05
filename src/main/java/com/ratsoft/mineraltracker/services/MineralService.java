@@ -45,8 +45,8 @@ public interface MineralService {
     /**
      * Save an image for a mineral.
      *
-     * @param id   the id of the image.
-     * @param file the image file to be added.
+     * @param id         the id of the image.
+     * @param imageBytes the image file to be added.
      */
-    void saveImageFile(@NonNull Long id, @NonNull Byte[] file);
+    void saveImageFile(@NonNull Long id, @NonNull Byte @NonNull [] imageBytes);
 }

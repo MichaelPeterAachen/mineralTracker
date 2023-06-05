@@ -62,12 +62,14 @@ public class FoodController {
      * @return the template name.
      */
     @GetMapping("/{id}")
-    public @NonNull ModelAndView showFood(@PathVariable final @NonNull String id) {
+    public @NonNull ModelAndView showFood(@SuppressWarnings("SameParameterValue") @PathVariable final @NonNull String id) {
         log.debug("Getting food with id: {}", id);
 
         final ModelAndView mav = new ModelAndView("foods/show");
 
         final Optional<Food> food = foodService.getFood(Long.valueOf(id));
+
+        //noinspection NestedMethodCall
         food.ifPresent(value -> mav.addObject("food", value));
 
         return mav;
@@ -80,7 +82,7 @@ public class FoodController {
      * @param model the model for the template.
      * @return the template name or editing.
      */
-    @SuppressWarnings("NestedMethodCall")
+    @SuppressWarnings({"NestedMethodCall", "DataFlowIssue", "FeatureEnvy"})
     @GetMapping("/{id}/editform")
     public @NonNull String getEditFoodForm(@PathVariable final @NonNull String id, final @NonNull Model model) {
         log.debug("Getting edit form for a food with id: {}", id);
@@ -90,16 +92,17 @@ public class FoodController {
         if (food.isPresent()) {
             final FoodCommand attributeValue = foodMapper.foodToCommand(food.get());
 
-            final AmountContainedCommand containedCommand = new AmountContainedCommand();
-            containedCommand.setMineral(new MineralCommand());
-
-            final AmountContainedCommand containedCommand1 = new AmountContainedCommand();
-            containedCommand1.setMineral(new MineralCommand());
-
-            final AmountContainedCommand containedCommand2 = new AmountContainedCommand();
-            containedCommand2.setMineral(new MineralCommand());
 
             if (attributeValue != null) {
+                final AmountContainedCommand containedCommand = new AmountContainedCommand();
+                containedCommand.setMineral(new MineralCommand());
+
+                final AmountContainedCommand containedCommand1 = new AmountContainedCommand();
+                containedCommand1.setMineral(new MineralCommand());
+
+                final AmountContainedCommand containedCommand2 = new AmountContainedCommand();
+                containedCommand2.setMineral(new MineralCommand());
+
                 final List<AmountContainedCommand> containedMinerals = attributeValue.getContainedMinerals();
                 containedMinerals.add(containedCommand);
                 containedMinerals.add(containedCommand1);
@@ -120,7 +123,7 @@ public class FoodController {
      * @param model the model for the template.
      * @return the template name or editing.
      */
-    @SuppressWarnings("NestedMethodCall")
+    @SuppressWarnings({"DataFlowIssue", "FeatureEnvy"})
     @GetMapping("/newform")
     public @NonNull String getNewFoodForm(final @NonNull Model model) {
         log.debug("Getting new food form.");

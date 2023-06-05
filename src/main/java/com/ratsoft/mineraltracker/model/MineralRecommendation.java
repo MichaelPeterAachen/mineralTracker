@@ -35,6 +35,12 @@ public class MineralRecommendation {
     @Enumerated(EnumType.STRING)
     private @NonNull RecommendationPeriodType timePeriodDimension;
 
+    /**
+     * Return if the input name is equal the mineral name.
+     *
+     * @param mineralName the name of the mineral.
+     * @return true if name is equal minerals name attribute.
+     */
     public boolean isForMineral(final @NonNull String mineralName) {
         final String name = mineral.getName();
         return name.equals(mineralName);
