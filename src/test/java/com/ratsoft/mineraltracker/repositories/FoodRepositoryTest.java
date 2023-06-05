@@ -24,6 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NoArgsConstructor
 class FoodRepositoryTest {
 
+    /**
+     * Repository to access the food entities.
+     */
     @Autowired
     @NonNull
     FoodRepository foodRepository;

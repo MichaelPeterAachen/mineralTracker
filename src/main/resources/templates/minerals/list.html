@@ -1,65 +1,66 @@
 <!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Recipe Home</title>
-    <!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
+	<meta charset="UTF-8"/>
+	<title>Recipe Home</title>
+	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script-->
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
-    > <!--th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"
+	> <!--th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"-->
 
-    <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+	<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script> <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+	        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	        crossorigin="anonymous"></script> <!--th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"-->
 </head>
 <body>
 <div class="container-fluid bg-3" style="margin-top: 20px">
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <div class="panel panel-default">
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/">&lt; Back</a></p>
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-md-11">
-                            <h1 class="panel-title" th:text="'List of Minerals'">Mineral list</h1>
-                        </div>
-                        <div class="col-md-1">
-                            <a class="btn btn-default" href="#" th:href="@{'/minerals/newform'}" role="button">New</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="thead-inverse">
-                            <tr>
-                                <th>ID</th>
-                                <th>Description</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="mineral: ${minerals}">
-                                <td th:text="${mineral?.id}">Mineral ID</td>
-                                <td th:text="${mineral?.name}">Mineral name</td>
-                                <td><a href="#" th:href="@{'/minerals/'+${mineral?.id}}">View</a>
-                                    &nbsp;&nbsp;<a href="#" th:href="@{'/minerals/'+${mineral?.id}+'/editform'}">Edit</a>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<div class="panel panel-default">
+				<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/">&lt; Back</a></p>
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-md-11">
+							<h1 class="panel-title" th:text="'List of Minerals'">Mineral list</h1>
+						</div>
+						<div class="col-md-1">
+							<a class="btn btn-default" href="#" th:href="@{'/minerals/newform'}" role="button">New</a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead class="thead-inverse">
+							<tr>
+								<th>ID</th>
+								<th>Description</th>
+								<th>Actions</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:each="mineral: ${minerals}">
+								<td th:text="${mineral?.id}">Mineral ID</td>
+								<td th:text="${mineral?.name}">Mineral name</td>
+								<td><a href="#" th:href="@{'/minerals/'+${mineral?.id}}">View</a>
+									&nbsp;&nbsp;<a href="#" th:href="@{'/minerals/'+${mineral?.id}+'/editform'}">Edit</a>
 
-                                    &nbsp;&nbsp;<a href="#" th:href="@{'/minerals/'+${mineral?.id}+'/delete'}">Delete</a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+									&nbsp;&nbsp;<a href="#" th:href="@{'/minerals/'+${mineral?.id}+'/delete'}">Delete</a>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 </body>
 </html>

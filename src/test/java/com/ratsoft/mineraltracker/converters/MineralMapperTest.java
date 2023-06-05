@@ -12,12 +12,12 @@ import org.mapstruct.factory.Mappers;
  *
  * @author mpeter
  */
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings({"DataFlowIssue", "MissingJavadoc"})
 @NoArgsConstructor
 class MineralMapperTest {
 
     @Test
-    public void testMappingToCommand() {
+    void testMappingToCommand() {
         final Mineral mineral = new Mineral(1L, "SELEN", null);
 
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
@@ -30,7 +30,7 @@ class MineralMapperTest {
     }
 
     @Test
-    public void testMappingfromCommand() {
+    void testMappingfromCommand() {
         final MineralCommand mineralCommand = new MineralCommand(1L, "SELEN", null);
 
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
@@ -43,7 +43,7 @@ class MineralMapperTest {
     }
 
     @Test
-    public void testMappingToCommandNull() {
+    void testMappingToCommandNull() {
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
         final MineralCommand mineralCommand = mapper.mineralToCommand(null);
 
@@ -52,7 +52,7 @@ class MineralMapperTest {
     }
 
     @Test
-    public void testMappingfromCommandNull() {
+    void testMappingfromCommandNull() {
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
         final Mineral mineral = mapper.commandToMineral(null);
 

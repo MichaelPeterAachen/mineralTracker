@@ -33,7 +33,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared"})
+@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared", "MissingJavadoc", "HardcodedFileSeparator"})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @NoArgsConstructor
@@ -59,7 +59,7 @@ public class MineralRecommendationServiceIT {
     private @NonNull MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                                  .build();
     }
@@ -68,6 +68,7 @@ public class MineralRecommendationServiceIT {
     @Test
     public void testSaveofDescriptionViaService() {
         final Mineral newMineral = new Mineral(3L, "Mangan", null);
+        //noinspection NonAsciiCharacters
         final MineralRecommendation mineralRecommendation = buildMineralRecommendation(newMineral, 1, Unit.µg, RecommendationPeriodType.DAYS);
         mineralRecommendation.setId(null);
 
@@ -82,6 +83,7 @@ public class MineralRecommendationServiceIT {
     @Test
     public void testSaveofDescriptionViaController() {
         final MineralCommand newMineral = new MineralCommand(3L, "Mangan", null);
+        //noinspection NonAsciiCharacters
         final MineralRecommendationCommand mineralRecommendationCommand = buildMineralRecommendationCommand(newMineral, 1, Unit.µg, RecommendationPeriodType.DAYS);
         mineralRecommendationCommand.setId(null);
 
@@ -107,6 +109,7 @@ public class MineralRecommendationServiceIT {
         assertThat(mineralOptionalBefore).withFailMessage("Precondition for test not correct. Recommendation alre ady in database.")
                                          .isEmpty();
 
+        //noinspection NestedMethodCall
         mockMvc.perform(post(URI.create("/mineralrecommendations")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                                    .param("mineralId", "3")
                                                                    .param("minAmount", "1.0")
@@ -114,36 +117,39 @@ public class MineralRecommendationServiceIT {
                                                                    .param("unit", "mg")
                                                                    .param("timePeriodLength", "3")
                                                                    .param("timePeriodDimension", "DAYS"))
-               .andExpect(status().isMovedTemporarily());
+               .andExpect(status().is3xxRedirection());
 
 
         final Optional<MineralRecommendation> mineralOptionalAfter = recommendationService.findRecommendationForMineral("Mangan");
 
         assertThat(mineralOptionalAfter).isPresent();
 
+        //noinspection OptionalGetWithoutIsPresent
         final MineralRecommendation mineralRecommendationAfter = mineralOptionalAfter.get();
         assertThat(mineralRecommendationAfter.getMineral()
                                              .getName()).isEqualTo("Mangan");
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static MineralRecommendation buildMineralRecommendation(final @NonNull Mineral mineral, final long no, final @NonNull Unit unit, final @NonNull RecommendationPeriodType periodType) {
         final MineralRecommendation mineralRecommendation1 = new MineralRecommendation();
         mineralRecommendation1.setId(1L + no);
         mineralRecommendation1.setMineral(mineral);
-        mineralRecommendation1.setMinAmount(0.0f + no / 10);
-        mineralRecommendation1.setMaxAmount(9.0f + no / 10);
+        mineralRecommendation1.setMinAmount(0.0f + no / 10.0f);
+        mineralRecommendation1.setMaxAmount(9.0f + no / 10.0f);
         mineralRecommendation1.setUnit(unit);
         mineralRecommendation1.setTimePeriodDimension(periodType);
         mineralRecommendation1.setTimePeriodLength(no);
         return mineralRecommendation1;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static MineralRecommendationCommand buildMineralRecommendationCommand(final @NonNull MineralCommand mineralCommand, final long no, final @NonNull Unit unit, final @NonNull RecommendationPeriodType periodType) {
         final MineralRecommendationCommand mineralRecommendation1 = new MineralRecommendationCommand();
         mineralRecommendation1.setId(1L + no);
         mineralRecommendation1.setMineral(mineralCommand);
-        mineralRecommendation1.setMinAmount(0.0f + no / 10);
-        mineralRecommendation1.setMaxAmount(9.0f + no / 10);
+        mineralRecommendation1.setMinAmount(0.0f + no / 10.0f);
+        mineralRecommendation1.setMaxAmount(9.0f + no / 10.0f);
         mineralRecommendation1.setUnit(unit);
         mineralRecommendation1.setTimePeriodDimension(periodType);
         mineralRecommendation1.setTimePeriodLength(no);

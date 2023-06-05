@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL -->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8"/>
@@ -25,8 +26,10 @@
 				<input type="hidden" th:if="${mineralrecommendation.id != null}" th:field="*{id}"/>
 				<div class="panel panel-primary">
 					<p>
-						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals" th:if="${mineralrecommendation.id != null}" th:href="@{'/mineralrecommendations/'+${mineralrecommendation.id}}">&lt; Back</a>
-						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals" th:if="${mineralrecommendation.id == null}" th:href="@{'/mineralrecommendations/'}">&lt; Back</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals" th:if="${mineralrecommendation.id != null}" th:href="@{'/mineralrecommendations/'+${mineralrecommendation.id}}">&lt;
+						Back</a>
+						&nbsp;&nbsp;&nbsp;&nbsp;<a href="/minerals" th:if="${mineralrecommendation.id == null}" th:href="@{'/mineralrecommendations/'}">&lt;
+						Back</a>
 					</p>
 					<div class="panel-heading">
 						<h1 class="panel-title">Update Mineral Recommendation</h1>
@@ -45,7 +48,8 @@
 									<option th:each="mineral : ${minerals}"
 									        th:value="${mineral.id}"
 									        th:selected="${mineralrecommendation.mineral != null and mineral.id.equals(mineralrecommendation.mineral?.id)}"
-									        th:text="${mineral.name}">Name of mineral</option>
+									        th:text="${mineral.name}">Name of mineral
+									</option>
 								</select>
 							</div>
 						</div>
@@ -89,7 +93,7 @@
 					</div>
 				</div>
 				<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
+			</form>
 		</div>
 	</div>
 </div>

@@ -28,16 +28,14 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SuppressWarnings({"ProhibitedExceptionDeclared", "MissingJavadoc", "HardcodedFileSeparator"})
+@SuppressWarnings({"ProhibitedExceptionDeclared", "MissingJavadoc", "HardcodedFileSeparator", "NestedMethodCall"})
 @ExtendWith(MockitoExtension.class)
 @NoArgsConstructor
-public class MineralControllerTest {
+class MineralControllerTest {
 
     private @NonNull MineralController mineralController;
 
@@ -53,7 +51,8 @@ public class MineralControllerTest {
     @BeforeEach
     void setUp() {
         mineralController = new MineralController(mineralService, Mappers.getMapper(MineralMapper.class));
-        mockMvc = MockMvcBuilders.standaloneSetup(mineralController)
+        final GlobalControllerExceptionHandler globalController = new GlobalControllerExceptionHandler();
+        mockMvc = MockMvcBuilders.standaloneSetup(mineralController, globalController)
                                  .build();
     }
 
@@ -170,14 +169,14 @@ public class MineralControllerTest {
 
         mockMvc.perform(post(URI.create("/minerals")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                      .param("name", "NewMineral2"))
-               .andExpect(status().isMovedTemporarily())
+               .andExpect(status().is3xxRedirection())
                .andExpect(view().name("redirect:/minerals/3"));
     }
 
     @Test
     void deleteMineral() throws Exception {
         mockMvc.perform(get("/minerals/1/delete"))
-               .andExpect(status().isMovedTemporarily())
+               .andExpect(status().is3xxRedirection())
                .andExpect(view().name("redirect:/minerals"));
 
         verify(mineralService, times(1)).deleteMineral(1L);
@@ -207,7 +206,7 @@ public class MineralControllerTest {
                .andExpect(view().name("error/error"));
     }
 
-    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) throws IOException {
+    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) {
         final Byte[] imageByteObject = new Byte[imageBytes.length];
         for (int i = 0; i < imageBytes.length; i++) {
             imageByteObject[i] = imageBytes[i];
@@ -215,7 +214,7 @@ public class MineralControllerTest {
         return imageByteObject;
     }
 
-    private static @NonNull byte @NonNull [] transformImageForController(final @NonNull Byte @NonNull [] imageBytes) throws IOException {
+    private static @NonNull byte @NonNull [] transformImageForController(final @NonNull Byte @NonNull [] imageBytes) {
         final byte[] imageByteObject = new byte[imageBytes.length];
         for (int i = 0; i < imageBytes.length; i++) {
             imageByteObject[i] = imageBytes[i];

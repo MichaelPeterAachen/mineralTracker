@@ -34,19 +34,22 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@SuppressWarnings("ProhibitedExceptionDeclared")
+/**
+ * Tests for the controller for accessing the food entities.
+ *
+ * @author mpeter
+ */
+@SuppressWarnings({"ProhibitedExceptionDeclared", "MissingJavadoc", "HardcodedFileSeparator"})
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @NoArgsConstructor
-public class FoodControllerTest {
+class FoodControllerTest {
 
     @Autowired
     private @NonNull FoodController foodController;
@@ -72,6 +75,7 @@ public class FoodControllerTest {
                                  .build();
     }
 
+    @SuppressWarnings({"unchecked", "NestedMethodCall"})
     @Test
     void listFoods() throws Exception {
         final Food food1 = createFood(1L);
@@ -99,6 +103,7 @@ public class FoodControllerTest {
                                                .attribute("foods", Matchers.equalToObject(foodList)));
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Test
     void showFood() throws Exception {
         final Food food2 = createFood(2L);
@@ -114,6 +119,7 @@ public class FoodControllerTest {
                                                .attribute("food", food2));
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Test
     void getEditFormForFood() throws Exception {
         final Food food2 = createFood(2L);
@@ -128,6 +134,7 @@ public class FoodControllerTest {
                                                .attributeExists("food"));
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Test
     void getNewFormForFood() throws Exception {
         final FoodCommand foodCommandNew = new FoodCommand();
@@ -141,6 +148,7 @@ public class FoodControllerTest {
         // TODO: Test minerals
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Test
     void newFood() throws Exception {
         final FoodCommand foodCommandNew = createFoodCommand(3L);
@@ -152,16 +160,17 @@ public class FoodControllerTest {
 
         mockMvc.perform(post(URI.create("/foods")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                   .param("name", "NewFood2"))
-               .andExpect(status().isMovedTemporarily())
+               .andExpect(status().is3xxRedirection())
                .andExpect(view().name("redirect:/foods/3/editform"));
 
         // TODO: Test minerals
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Test
     void deleteFood() throws Exception {
         mockMvc.perform(get("/foods/1/delete"))
-               .andExpect(status().isMovedTemporarily())
+               .andExpect(status().is3xxRedirection())
                .andExpect(view().name("redirect:/foods"));
 
         verify(foodService, times(1)).deleteFood(1L);

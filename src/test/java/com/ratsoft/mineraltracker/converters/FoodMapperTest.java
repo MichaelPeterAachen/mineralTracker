@@ -8,9 +8,9 @@ import com.ratsoft.mineraltracker.model.Food;
 import com.ratsoft.mineraltracker.model.Mineral;
 import com.ratsoft.mineraltracker.model.Unit;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,17 +25,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author mpeter
  */
-@SuppressWarnings({"ProhibitedExceptionDeclared", "DataFlowIssue"})
+@SuppressWarnings({"DataFlowIssue", "MissingJavadoc"})
 @ExtendWith(SpringExtension.class)
 @NoArgsConstructor
 @SpringBootTest
 class FoodMapperTest {
 
+
     @Autowired
-    private FoodMapper foodMapper;
+    private @NonNull FoodMapper foodMapper;
 
     @Test
-    public void testMappingToCommand() throws Exception {
+    void testMappingToCommand() {
         final Mineral mineral = new Mineral(1L, "SELEN", null);
         final AmountContained amountContained = new AmountContained(1L, mineral, 1.0f, Unit.mg, null);
         final Food food = new Food(1L, "Spinat", List.of(amountContained));
@@ -49,8 +50,9 @@ class FoodMapperTest {
                                                       .isEqualTo(foodCommand.getContainedMinerals());
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Test
-    public void testMappingfromCommand() throws Exception {
+    void testMappingfromCommand() {
         final MineralCommand mineralCommand = new MineralCommand(1L, "SELEN", null);
         final AmountContainedCommand amountContainedCommand = new AmountContainedCommand(1L, mineralCommand, 1.0f, Unit.mg, false);
         final List<AmountContainedCommand> amountContainedCommand1 = new ArrayList<>(List.of(amountContainedCommand));
@@ -67,7 +69,7 @@ class FoodMapperTest {
     }
 
     @Test
-    public void testMappingToCommandNull() throws Exception {
+    void testMappingToCommandNull() {
         final FoodCommand foodCommand = foodMapper.foodToCommand(null);
 
         assertThat(foodCommand)
@@ -75,7 +77,7 @@ class FoodMapperTest {
     }
 
     @Test
-    public void testMappingfromCommandNull() throws Exception {
+    void testMappingfromCommandNull() {
         final Food food = foodMapper.commandToFood(null);
 
         assertThat(food)

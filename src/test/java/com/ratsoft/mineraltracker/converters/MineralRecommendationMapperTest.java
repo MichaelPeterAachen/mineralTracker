@@ -16,12 +16,12 @@ import org.mapstruct.factory.Mappers;
  *
  * @author mpeter
  */
-@SuppressWarnings({"ProhibitedExceptionDeclared", "DataFlowIssue"})
+@SuppressWarnings({"DataFlowIssue", "MissingJavadoc"})
 @NoArgsConstructor
 class MineralRecommendationMapperTest {
 
     @Test
-    public void testMappingToCommand() throws Exception {
+    void testMappingToCommand() {
         final Mineral mineral = new Mineral(2L, "SELEN", null);
 
         final MineralRecommendation mineralRecommendation = new MineralRecommendation();
@@ -59,7 +59,7 @@ class MineralRecommendationMapperTest {
     }
 
     @Test
-    public void testMappingfromCommand() throws Exception {
+    void testMappingfromCommand() {
         final MineralCommand mineralCommand = new MineralCommand(2L, "SELEN", null);
 
         final MineralRecommendationCommand mineralRecommendationCommand = new MineralRecommendationCommand();
@@ -97,7 +97,7 @@ class MineralRecommendationMapperTest {
     }
 
     @Test
-    public void testMappingToCommandNull() throws Exception {
+    void testMappingToCommandNull() {
         final MineralRecommendationMapper mapper = Mappers.getMapper(MineralRecommendationMapper.class);
         final MineralRecommendationCommand mineralCommand = mapper.mineralRecommendationToCommand(null);
 
@@ -106,7 +106,7 @@ class MineralRecommendationMapperTest {
     }
 
     @Test
-    public void testMappingfromCommandNull() throws Exception {
+    void testMappingfromCommandNull() {
         final MineralRecommendationMapper mapper = Mappers.getMapper(MineralRecommendationMapper.class);
         final MineralRecommendation mineral = mapper.commandToMineralRecommendation(null);
 

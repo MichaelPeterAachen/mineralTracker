@@ -30,6 +30,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings({"MissingJavadoc", "NestedMethodCall"})
 @ExtendWith(MockitoExtension.class)
 @NoArgsConstructor
 @SpringBootTest
@@ -48,13 +49,14 @@ class FoodServiceTest {
     private @NonNull MineralMapper mineralMapper;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
+        //noinspection deprecation
         MockitoAnnotations.initMocks(this);
         foodService = new FoodServiceImpl(foodRepository, foodMapper, mineralService, mineralMapper);
     }
 
     @Test
-    public void getAllFoods() {
+    void getAllFoods() {
         final Food food1 = createFood(1L);
         final Food food2 = createFood(2L);
 
@@ -68,7 +70,7 @@ class FoodServiceTest {
     }
 
     @Test
-    public void getFoodPresent() {
+    void getFoodPresent() {
         final Food food2 = createFood(3L);
 
         when(foodRepository.findById(3L)).thenReturn(Optional.of(food2));
@@ -80,7 +82,7 @@ class FoodServiceTest {
     }
 
     @Test
-    public void getFoodNotPresent() {
+    void getFoodNotPresent() {
         when(foodRepository.findById(4L)).thenReturn(Optional.empty());
 
         final Optional<Food> food = foodService.getFood(4L);
@@ -89,15 +91,16 @@ class FoodServiceTest {
     }
 
     @Test
-    public void saveFood() {
+    void saveFood() {
         final Food foodNew = createFood(8L);
         foodNew.setId(null);
         final Food foodSaved = createFood(2L);
 
         when(foodRepository.save(any())).thenReturn(foodSaved);
 
-        Mineral test = new Mineral(8L, "Test", null);
-        lenient().when(mineralService.getMineral(any())).thenReturn(Optional.of(test));
+        final Mineral test = new Mineral(8L, "Test", null);
+        lenient().when(mineralService.getMineral(any()))
+                 .thenReturn(Optional.of(test));
 
         final FoodCommand foodCommandNew = createFoodCommand(8L);
         foodCommandNew.setId(null);
@@ -112,7 +115,7 @@ class FoodServiceTest {
     }
 
     @Test
-    public void deleteFoodl() {
+    void deleteFoodl() {
         foodService.deleteFood(2L);
         verify(foodRepository, times(1)).deleteById(2L);
     }
@@ -125,8 +128,8 @@ class FoodServiceTest {
         return new Food(id, "Spinat", amountContaineds);
     }
 
-    @SuppressWarnings("StringConcatenationMissingWhitespace")
-    private static FoodCommand createFoodCommand(@NonNull final long id) {
+    @SuppressWarnings({"StringConcatenationMissingWhitespace", "SameParameterValue"})
+    private static FoodCommand createFoodCommand(final @NonNull long id) {
         final MineralCommand mineralCommand = new MineralCommand(id, "SELEN" + id, null);
         final AmountContainedCommand amountContainedCommand = new AmountContainedCommand(id, mineralCommand, 1.0f + id, Unit.mg, false);
         final List<AmountContainedCommand> amountContainedCommands = new ArrayList<>(List.of(amountContainedCommand));

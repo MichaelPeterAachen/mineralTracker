@@ -13,7 +13,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +21,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("DataFlowIssue")
+@SuppressWarnings({"DataFlowIssue", "MissingJavadoc", "NestedMethodCall"})
 @NoArgsConstructor
 class MineralServiceTest {
     @Mock
@@ -31,7 +30,8 @@ class MineralServiceTest {
     private @NonNull MineralService mineralService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
+        //noinspection deprecation
         MockitoAnnotations.initMocks(this);
         final MineralMapper mapper = Mappers.getMapper(MineralMapper.class);
 
@@ -39,7 +39,7 @@ class MineralServiceTest {
     }
 
     @Test
-    public void getAllMinerals() {
+    void getAllMinerals() {
         final Mineral mineral1 = new Mineral(1L, "IRON1", null);
         final Mineral mineral2 = new Mineral(2L, "SELEN1", null);
 
@@ -53,7 +53,7 @@ class MineralServiceTest {
     }
 
     @Test
-    public void getMineralPresent() {
+    void getMineralPresent() {
         final Mineral mineral2 = new Mineral(2L, "SELEN2", null);
 
         when(mineralRepository.findById(2L)).thenReturn(Optional.of(mineral2));
@@ -65,7 +65,7 @@ class MineralServiceTest {
     }
 
     @Test
-    public void getMineralNotPresent() {
+    void getMineralNotPresent() {
         when(mineralRepository.findById(4L)).thenReturn(Optional.empty());
 
         final Optional<Mineral> mineralResult = mineralService.getMineral(4L);
@@ -74,7 +74,7 @@ class MineralServiceTest {
     }
 
     @Test
-    public void saveMineral() {
+    void saveMineral() {
         final Mineral mineralNew = new Mineral(null, "NEWMINERAL", null);
         final Mineral mineralNewSaved = new Mineral(3L, "NEWMINERAL", null);
 
@@ -89,14 +89,14 @@ class MineralServiceTest {
     }
 
     @Test
-    public void deleteMineral() {
+    void deleteMineral() {
         mineralService.deleteMineral(2L);
         verify(mineralRepository, times(1)).deleteById(2L);
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void saveImageFile() throws IOException {
+    void saveImageFile() {
         final Long id = 1L;
         // TODO final MultipartFile multipartFile = new MockMultipartFile("imagefile", "testing.txt", "text/plain", "Spring Framework Test".getBytes(StandardCharsets.UTF_8));
 
@@ -121,7 +121,7 @@ class MineralServiceTest {
         assertThat(imageDomain).isEqualTo(savedMineral.getImage());
     }
 
-    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) throws IOException {
+    private static @NonNull Byte @NonNull [] transformImageForDomain(final @NonNull byte @NonNull [] imageBytes) {
         final Byte[] imageByteObject = new Byte[imageBytes.length];
         for (int i = 0; i < imageBytes.length; i++) {
             imageByteObject[i] = imageBytes[i];

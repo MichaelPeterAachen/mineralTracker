@@ -16,10 +16,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@SuppressWarnings("ProhibitedExceptionDeclared")
+@SuppressWarnings({"ProhibitedExceptionDeclared", "MissingJavadoc", "NestedMethodCall"})
 @ExtendWith(MockitoExtension.class)
 @NoArgsConstructor
-public class LandingPageControllerTest {
+class LandingPageControllerTest {
     @InjectMocks
     private @NonNull LandingPageController landingPageController;
 
@@ -35,6 +35,7 @@ public class LandingPageControllerTest {
                                  .build();
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     @Test
     void getLandingPage() throws Exception {
         mockMvc.perform(get("/"))

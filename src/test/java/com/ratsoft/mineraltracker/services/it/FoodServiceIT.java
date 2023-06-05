@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author mpeter
  */
-@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared", "OptionalGetWithoutIsPresent", "DataFlowIssue"})
+@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared", "OptionalGetWithoutIsPresent", "DataFlowIssue", "MissingJavadoc", "NestedMethodCall"})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Slf4j
@@ -61,6 +60,7 @@ public class FoodServiceIT {
     FoodRepository foodRepository;
 
     @Autowired
+    @NonNull
     FoodMapper foodMapper;
 
     @Autowired
@@ -72,7 +72,7 @@ public class FoodServiceIT {
     private @NonNull MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                                  .build();
     }
@@ -112,7 +112,8 @@ public class FoodServiceIT {
 
         final FoodCommand expectedFood = createExpectedFoodCommand(1L, foodAfter);
 
-        assertThat(foodAfter).usingRecursiveComparison().ignoringFields("containedMinerals")
+        assertThat(foodAfter).usingRecursiveComparison()
+                             .ignoringFields("containedMinerals")
                              .isEqualTo(expectedFood);
 
         final List<AmountContained> containedMineralsBefore = foodAfter.getContainedMinerals();
@@ -151,6 +152,7 @@ public class FoodServiceIT {
         assertThat(amountAfter).isEqualTo(amountBefore - 1);
     }
 
+    @SuppressWarnings("HardcodedFileSeparator")
     @Transactional
     @Test
     public void testUpdateofDescriptionViaRest() throws Exception {
@@ -162,7 +164,7 @@ public class FoodServiceIT {
 
         mockMvc.perform(post(URI.create("/foods")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                   .param("name", newFood.getName()))
-               .andExpect(status().isMovedTemporarily());
+               .andExpect(status().is3xxRedirection());
 
         final Optional<Food> foodOptionalAfter = foodRepository.findByName(newFood.getName());
 
@@ -181,6 +183,7 @@ public class FoodServiceIT {
         final Mineral mineral = new Mineral(1L, "Eisen", null);
         final AmountContained amountContained = new AmountContained(1L, mineral, 1.0f, Unit.mg, null);
 
+        //noinspection MismatchedQueryAndUpdateOfCollection
         final Collection<AmountContained> amountContaineds = new ArrayList<>(5);
         amountContaineds.add(amountContained);
         return new Food(id, "Spinat" + id, List.of(amountContained));
@@ -199,6 +202,7 @@ public class FoodServiceIT {
         return new FoodCommand(id, "Spinat" + id, amountContainedCommands);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static FoodCommand createExpectedFoodCommand(final @NonNull Long id, final FoodCommand saveFoodCommand) {
         final Long savedFoodId = saveFoodCommand.getId();
         final Long amoundContainedId = saveFoodCommand.getContainedMinerals()
@@ -213,6 +217,7 @@ public class FoodServiceIT {
         return expectedFoodCommand;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static FoodCommand createExpectedFoodCommand(final @NonNull Long id, final Food saveFoodCommand) {
         final Long savedFoodId = saveFoodCommand.getId();
 

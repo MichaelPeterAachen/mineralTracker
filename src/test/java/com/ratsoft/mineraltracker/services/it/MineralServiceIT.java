@@ -27,7 +27,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared"})
+@SuppressWarnings({"PackageVisibleField", "ProhibitedExceptionDeclared", "MissingJavadoc"})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @NoArgsConstructor
@@ -50,9 +50,9 @@ public class MineralServiceIT {
     private @NonNull MockMvc mockMvc;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                                      .build();
+                                 .build();
     }
 
     @Transactional
@@ -89,6 +89,7 @@ public class MineralServiceIT {
         assertThat(mineral.getId()).isGreaterThan(1L);
     }
 
+    @SuppressWarnings("NestedMethodCall")
     @Transactional
     @Test
     public void testUpdateofDescriptionViaRest() throws Exception {
@@ -97,19 +98,22 @@ public class MineralServiceIT {
         assertThat(mineralOptionalBefore).withFailMessage("Precondition for test not correct. Mineral missing in database.")
                                          .isPresent();
 
+        //noinspection OptionalGetWithoutIsPresent
         final Long currId = mineralOptionalBefore.get()
                                                  .getId();
 
+        //noinspection HardcodedFileSeparator
         mockMvc.perform(post(URI.create("/minerals")).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                                      .param("name", "Eisen2")
                                                      .param("id", String.valueOf(currId)))
-               .andExpect(status().isMovedTemporarily());
+               .andExpect(status().is3xxRedirection());
 
 
         final Optional<Mineral> mineralOptional = mineralRepository1.findByName("Eisen2");
 
         assertThat(mineralOptional).isPresent();
 
+        //noinspection OptionalGetWithoutIsPresent
         final Mineral mineral = mineralOptional.get();
         assertThat(mineral.getName()).isEqualTo("Eisen2");
         assertThat(mineral.getId()).isEqualTo(currId);

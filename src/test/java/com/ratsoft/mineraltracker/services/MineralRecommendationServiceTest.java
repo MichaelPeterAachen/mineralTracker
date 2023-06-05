@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
  *
  * @author mpeter
  */
+@SuppressWarnings({"MissingJavadoc", "NestedMethodCall"})
 @NoArgsConstructor
 class MineralRecommendationServiceTest {
     @Mock
@@ -38,7 +39,8 @@ class MineralRecommendationServiceTest {
     private @NonNull MineralRecommendationService mineralRecommendationService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
+        //noinspection deprecation
         MockitoAnnotations.initMocks(this);
         final MineralRecommendationMapper mapper = Mappers.getMapper(MineralRecommendationMapper.class);
 
@@ -46,13 +48,14 @@ class MineralRecommendationServiceTest {
     }
 
     @Test
-    public void getAllMineralRecommendations() {
+    void getAllMineralRecommendations() {
         final Mineral mineralCommand1 = new Mineral(1L, "Eisen", null);
         final Mineral mineralCommand2 = new Mineral(2L, "Selen", null);
         final Mineral mineralCommand3 = new Mineral(3L, "Mangan", null);
 
         final MineralRecommendation mineralRecommendation1 = buildMineralRecommendation(mineralCommand1, 1, Unit.mg, RecommendationPeriodType.HOURS);
         final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineralCommand2, 2, Unit.g, RecommendationPeriodType.DAYS);
+        //noinspection NonAsciiCharacters
         final MineralRecommendation mineralRecommendation3 = buildMineralRecommendation(mineralCommand3, 3, Unit.µg, RecommendationPeriodType.WEEKS);
 
         final List<MineralRecommendation> mineralRecommendations = List.of(mineralRecommendation1, mineralRecommendation2, mineralRecommendation3);
@@ -65,7 +68,7 @@ class MineralRecommendationServiceTest {
     }
 
     @Test
-    public void getMineralRecommendationPresent() {
+    void getMineralRecommendationPresent() {
         final Mineral mineralCommand = new Mineral(2L, "Selen", null);
         final MineralRecommendation mineralRecommendationExpected = buildMineralRecommendation(mineralCommand, 2, Unit.g, RecommendationPeriodType.DAYS);
 
@@ -78,7 +81,7 @@ class MineralRecommendationServiceTest {
     }
 
     @Test
-    public void getMineralNotPresent() {
+    void getMineralNotPresent() {
         when(mineralRecommendationRepository.findById(4L)).thenReturn(Optional.empty());
 
         final Optional<MineralRecommendation> mineralResult = mineralRecommendationService.getMineralRecommendation(4L);
@@ -87,7 +90,7 @@ class MineralRecommendationServiceTest {
     }
 
     @Test
-    public void saveMineral() {
+    void saveMineral() {
         // Given
         final Mineral mineral = new Mineral(2L, "Selen", null);
 
@@ -112,19 +115,20 @@ class MineralRecommendationServiceTest {
     }
 
     @Test
-    public void deleteMineral() {
+    void deleteMineral() {
         mineralRecommendationService.deleteMineralRecommendation(2L);
         verify(mineralRecommendationRepository, times(1)).deleteById(2L);
     }
 
     @Test
-    public void getUsedMinerals() {
+    void getUsedMinerals() {
         final Mineral mineral1 = new Mineral(1L, "Eisen", null);
         final Mineral mineral2 = new Mineral(2L, "Selen", null);
         final Mineral mineral3 = new Mineral(3L, "Mangan", null);
 
         final MineralRecommendation mineralRecommendation1 = buildMineralRecommendation(mineral1, 1, Unit.mg, RecommendationPeriodType.HOURS);
         final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineral2, 2, Unit.g, RecommendationPeriodType.DAYS);
+        //noinspection NonAsciiCharacters
         final MineralRecommendation mineralRecommendation3 = buildMineralRecommendation(mineral3, 3, Unit.µg, RecommendationPeriodType.WEEKS);
 
         final List<MineralRecommendation> mineralRecommendations = List.of(mineralRecommendation1, mineralRecommendation2, mineralRecommendation3);
@@ -133,17 +137,18 @@ class MineralRecommendationServiceTest {
 
         final Set<Mineral> mineralsAlreadyUsed = mineralRecommendationService.getMineralsAlreadyUsed();
 
-        assertThat(mineralsAlreadyUsed).containsExactlyInAnyOrder(mineral1,mineral2,mineral3);
+        assertThat(mineralsAlreadyUsed).containsExactlyInAnyOrder(mineral1, mineral2, mineral3);
     }
 
     @Test
-    public void getRecommendationForMinerals() {
+    void getRecommendationForMinerals() {
         final Mineral mineral1 = new Mineral(1L, "Eisen", null);
         final Mineral mineral2 = new Mineral(2L, "Selen", null);
         final Mineral mineral3 = new Mineral(3L, "Mangan", null);
 
         final MineralRecommendation mineralRecommendation1 = buildMineralRecommendation(mineral1, 1, Unit.mg, RecommendationPeriodType.HOURS);
         final MineralRecommendation mineralRecommendation2 = buildMineralRecommendation(mineral2, 2, Unit.g, RecommendationPeriodType.DAYS);
+        //noinspection NonAsciiCharacters
         final MineralRecommendation mineralRecommendation3 = buildMineralRecommendation(mineral3, 3, Unit.µg, RecommendationPeriodType.WEEKS);
 
         final List<MineralRecommendation> mineralRecommendations = List.of(mineralRecommendation1, mineralRecommendation2, mineralRecommendation3);
@@ -155,11 +160,12 @@ class MineralRecommendationServiceTest {
         assertThat(mineralRecommendationOptional).isPresent();
 
         final MineralRecommendation mineralRecommendation = mineralRecommendationOptional.get();
-        assertThat(mineralRecommendation.getMineral().getName()).isEqualTo("Selen");
+        assertThat(mineralRecommendation.getMineral()
+                                        .getName()).isEqualTo("Selen");
     }
 
     @Test
-    public void getRecommendationForMineralsMissing() {
+    void getRecommendationForMineralsMissing() {
         final Mineral mineral1 = new Mineral(1L, "Eisen", null);
 
         final MineralRecommendation mineralRecommendation1 = buildMineralRecommendation(mineral1, 1, Unit.mg, RecommendationPeriodType.HOURS);
@@ -174,7 +180,7 @@ class MineralRecommendationServiceTest {
     }
 
     @Test
-    public void getRecommendationForMineralsEmptyList() {
+    void getRecommendationForMineralsEmptyList() {
         final List<MineralRecommendation> mineralRecommendations = Collections.emptyList();
 
         when(mineralRecommendationRepository.findAll()).thenReturn(mineralRecommendations);
@@ -189,8 +195,8 @@ class MineralRecommendationServiceTest {
         final MineralRecommendation mineralRecommendation1 = new MineralRecommendation();
         mineralRecommendation1.setId(1L + no);
         mineralRecommendation1.setMineral(mineral);
-        mineralRecommendation1.setMinAmount(0.0f + no / 10);
-        mineralRecommendation1.setMaxAmount(9.0f + no / 10);
+        mineralRecommendation1.setMinAmount(0.0f + no / 10.0f);
+        mineralRecommendation1.setMaxAmount(9.0f + no / 10.0f);
         mineralRecommendation1.setUnit(unit);
         mineralRecommendation1.setTimePeriodDimension(periodType);
         mineralRecommendation1.setTimePeriodLength(no);
@@ -201,8 +207,8 @@ class MineralRecommendationServiceTest {
         final MineralRecommendationCommand mineralRecommendation1 = new MineralRecommendationCommand();
         mineralRecommendation1.setId(1L + no);
         mineralRecommendation1.setMineral(mineralCommand);
-        mineralRecommendation1.setMinAmount(0.0f + no / 10);
-        mineralRecommendation1.setMaxAmount(9.0f + no / 10);
+        mineralRecommendation1.setMinAmount(0.0f + no / 10.0f);
+        mineralRecommendation1.setMaxAmount(9.0f + no / 10.0f);
         mineralRecommendation1.setUnit(unit);
         mineralRecommendation1.setTimePeriodDimension(periodType);
         mineralRecommendation1.setTimePeriodLength(no);

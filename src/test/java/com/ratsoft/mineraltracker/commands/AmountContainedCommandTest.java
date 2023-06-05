@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@SuppressWarnings({"MissingJavadoc", "NestedMethodCall"})
 @NoArgsConstructor
 class AmountContainedCommandTest {
 
     @Test
-    public void isEmpty() {
+    void isEmpty() {
         final AmountContainedCommand command = new AmountContainedCommand();
 
         assertThat(command.isEmpty()).isTrue();
@@ -23,7 +24,7 @@ class AmountContainedCommandTest {
     }
 
     @Test
-    public void isNotEmptyIfId() {
+    void isNotEmptyIfId() {
         final AmountContainedCommand command = new AmountContainedCommand();
         command.setId(1L);
 
@@ -31,7 +32,7 @@ class AmountContainedCommandTest {
     }
 
     @Test
-    public void isNotEmptyIfMineral() {
+    void isNotEmptyIfMineral() {
         final AmountContainedCommand command1 = new AmountContainedCommand();
         command1.setMineral(new MineralCommand(1L, "TEST", null));
 
@@ -39,7 +40,7 @@ class AmountContainedCommandTest {
     }
 
     @Test
-    public void isNotEmptyIfAmount() {
+    void isNotEmptyIfAmount() {
         final AmountContainedCommand command = new AmountContainedCommand();
         command.setAmount(1.0f);
 
@@ -47,7 +48,7 @@ class AmountContainedCommandTest {
     }
 
     @Test
-    public void isNotEmptyIfUnit() {
+    void isNotEmptyIfUnit() {
         final AmountContainedCommand command = new AmountContainedCommand();
         command.setUnit(Unit.mg);
 

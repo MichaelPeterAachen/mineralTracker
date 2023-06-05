@@ -26,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NoArgsConstructor
 class MineralRecommendationRepositoryTest {
 
+    /**
+     * Repository to access the mineral recommendations.
+     */
     @Autowired
     @NonNull
     MineralRecommendationRepository mineralRecommendationRepository;
